@@ -10,16 +10,18 @@ const createMessageSchema = z.object({
   title: z.string().min(1).max(200),
   content: z.string().min(1).max(10000),
   triggerType: z.enum(['SWITCH', 'DATE', 'KEYHOLDER']),
-  scheduledAt: z.string().datetime().optional().nullable(),
+  // Accept any string date or null — avoid strict ISO format enforcement
+  scheduledAt: z.string().optional().nullable(),
   recipients: z.array(z.object({
     name: z.string().min(1),
-    email: z.string().email().optional(),
-    phone: z.string().optional(),
+    // Allow empty string or valid email or undefined
+    email: z.union([z.string().email(), z.literal(''), z.null()]).optional(),
+    phone: z.string().optional().nullable(),
     channel: z.enum(['EMAIL', 'WHATSAPP', 'SMS']),
   })).min(1).max(10),
 })
 
-// GET /api/messages — list user's messages
+// GET /api/messages
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ success: true, data: messages })
 }
 
-// POST /api/messages — create new message
+// POST /api/messages
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) {
@@ -55,15 +57,23 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  const body = await req.json()
+  let body: any
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
+
   const parsed = createMessageSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: 'بيانات غير صالحة', details: parsed.error.flatten() }, { status: 400 })
+    return NextResponse.json(
+      { error: 'بيانات غير صالحة', details: parsed.error.flatten() },
+      { status: 400 }
+    )
   }
 
   const { title, content, triggerType, scheduledAt, recipients } = parsed.data
 
-  // Create message with recipients
   const message = await prisma.message.create({
     data: {
       userId: session.user.id,
@@ -75,8 +85,8 @@ export async function POST(req: NextRequest) {
       recipients: {
         create: recipients.map(r => ({
           name: r.name,
-          email: r.email,
-          phone: r.phone,
+          email: r.email || null,
+          phone: r.phone || null,
           channel: r.channel,
           status: 'PENDING',
         })),
@@ -85,11 +95,11 @@ export async function POST(req: NextRequest) {
     include: { recipients: true },
   })
 
-  // Save to Google Drive (non-blocking)
+  // Save to Google Drive (non-blocking — won't crash if Drive not configured)
   saveMessageToDrive(session.user.id, message.id, {
     title,
     content,
-    recipients: recipients.map(r => ({ name: r.name, email: r.email, channel: r.channel })),
+    recipients: recipients.map(r => ({ name: r.name, email: r.email ?? undefined, channel: r.channel })),
     triggerType,
     scheduledAt: scheduledAt ?? null,
     createdAt: message.createdAt.toISOString(),
