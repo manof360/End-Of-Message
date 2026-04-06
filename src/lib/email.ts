@@ -1,5 +1,6 @@
 // src/lib/email.ts
-import nodemailer from 'nodemailer'
+// Uses Resend API (free tier: 3000 emails/month)
+// Sign up at resend.com, create API key, add RESEND_API_KEY to env vars
 
 type EmailOptions = {
   to: string
@@ -7,34 +8,38 @@ type EmailOptions = {
   html: string
 }
 
-let transporter: nodemailer.Transporter | null = null
+export async function sendEmail({ to, subject, html }: EmailOptions): Promise<boolean> {
+  const apiKey = process.env.RESEND_API_KEY
 
-function getTransporter() {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+  if (!apiKey || apiKey === 'placeholder') {
+    console.warn(`[Email] RESEND_API_KEY not set — skipping send to: ${to}`)
+    console.log(`[Email] Subject: ${subject}`)
+    return false
+  }
+
+  try {
+    const from = process.env.EMAIL_FROM || 'وصيتي <onboarding@resend.dev>'
+
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ from, to, subject, html }),
     })
-  }
-  return transporter
-}
 
-export async function sendEmail({ to, subject, html }: EmailOptions) {
-  if (!process.env.SMTP_HOST) {
-    console.warn('[Email] SMTP not configured — skipping send')
-    console.log(`[Email] Would have sent to: ${to} | Subject: ${subject}`)
-    return
-  }
+    const data = await res.json()
 
-  const t = getTransporter()
-  await t.sendMail({
-    from: process.env.EMAIL_FROM || 'وصيتي <noreply@wasiyati.com>',
-    to,
-    subject,
-    html,
-  })
+    if (!res.ok) {
+      console.error('[Email] Resend error:', data)
+      return false
+    }
+
+    console.log(`[Email] ✅ Sent to ${to} — ID: ${data.id}`)
+    return true
+  } catch (err) {
+    console.error('[Email] Send failed:', err)
+    return false
+  }
 }

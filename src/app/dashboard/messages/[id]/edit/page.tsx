@@ -1,20 +1,23 @@
 'use client'
-// src/app/dashboard/messages/new/page.tsx
+// src/app/dashboard/messages/[id]/edit/page.tsx
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { Plus, Trash2, ArrowRight } from 'lucide-react'
+import { Plus, Trash2, ArrowRight, Save } from 'lucide-react'
 import Link from 'next/link'
 
-type Recipient = { name: string; email: string; phone: string; channel: 'EMAIL' | 'WHATSAPP' | 'SMS'; isKeyholder?: boolean }
+type Recipient = { id?: string; name: string; email: string; phone: string; channel: 'EMAIL' | 'WHATSAPP' | 'SMS'; isKeyholder?: boolean }
 
-export default function NewMessagePage() {
+export default function EditMessagePage() {
   const router = useRouter()
+  const params = useParams()
+  const messageId = params.id as string
+
   const [loading, setLoading] = useState(false)
+  const [fetching, setFetching] = useState(true)
   const [keyholders, setKeyholders] = useState<{ id: string; name: string; email: string }[]>([])
   const [form, setForm] = useState({
-    title: '',
-    content: '',
+    title: '', content: '',
     triggerType: 'SWITCH' as 'SWITCH' | 'DATE' | 'KEYHOLDER',
     scheduledAt: '',
   })
@@ -23,20 +26,50 @@ export default function NewMessagePage() {
   ])
 
   useEffect(() => {
-    fetch('/api/keyholders').then(r => r.json()).then(d => {
-      if (d.success) setKeyholders(d.data || [])
-    }).catch(() => {})
-  }, [])
+    const load = async () => {
+      try {
+        const [msgRes, khRes] = await Promise.all([
+          fetch(`/api/messages/${messageId}`),
+          fetch('/api/keyholders'),
+        ])
+        const msgData = await msgRes.json()
+        const khData = await khRes.json()
 
-  const addKeyholderAsRecipient = (kh: { id: string; name: string; email: string }) => {
-    if (recipients.some(r => r.email === kh.email)) return toast.error('هذا الشاهد مضاف بالفعل')
-    setRecipients([...recipients, { name: kh.name, email: kh.email, phone: '', channel: 'EMAIL', isKeyholder: true }])
-    toast.success(`تمت إضافة ${kh.name}`)
-  }
+        if (msgData.success) {
+          const m = msgData.data
+          setForm({
+            title: m.title,
+            content: m.content,
+            triggerType: m.triggerType,
+            scheduledAt: m.scheduledAt ? new Date(m.scheduledAt).toISOString().slice(0, 16) : '',
+          })
+          setRecipients(m.recipients.map((r: any) => ({
+            id: r.id, name: r.name,
+            email: r.email || '', phone: r.phone || '',
+            channel: r.channel, isKeyholder: false,
+          })))
+        }
+        if (khData.success) setKeyholders(khData.data || [])
+      } catch { toast.error('فشل تحميل الرسالة') }
+      finally { setFetching(false) }
+    }
+    load()
+  }, [messageId])
 
   const addRecipient = () => {
     if (recipients.length >= 10) return toast.error('الحد الأقصى 10 مستلمين')
     setRecipients([...recipients, { name: '', email: '', phone: '', channel: 'EMAIL' }])
+  }
+
+  const addKeyholderAsRecipient = (kh: { id: string; name: string; email: string }) => {
+    if (recipients.some(r => r.email === kh.email)) {
+      return toast.error('هذا الشاهد مضاف بالفعل')
+    }
+    setRecipients([...recipients, {
+      name: kh.name, email: kh.email, phone: '',
+      channel: 'EMAIL', isKeyholder: true,
+    }])
+    toast.success(`تمت إضافة ${kh.name} كمستلم`)
   }
 
   const removeRecipient = (i: number) => {
@@ -53,15 +86,18 @@ export default function NewMessagePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title || !form.content) return toast.error('يرجى ملء جميع الحقول المطلوبة')
+    if (recipients.some(r => !r.name || (r.channel === 'EMAIL' && !r.email) || (['WHATSAPP', 'SMS'].includes(r.channel) && !r.phone))) {
+      return toast.error('يرجى ملء بيانات جميع المستلمين')
+    }
 
     setLoading(true)
     try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
+      const res = await fetch(`/api/messages/${messageId}`, {
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          scheduledAt: form.triggerType === 'DATE' ? new Date(form.scheduledAt).toISOString() : null,
+          scheduledAt: form.triggerType === 'DATE' ? form.scheduledAt : null,
           recipients: recipients.map(r => ({
             name: r.name,
             email: r.email || undefined,
@@ -72,8 +108,8 @@ export default function NewMessagePage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'حدث خطأ')
-      toast.success('✅ تم حفظ رسالتك')
-      router.push('/dashboard/messages')
+      toast.success('✅ تم تحديث الرسالة')
+      router.push(`/dashboard/messages/${messageId}`)
     } catch (err: any) {
       toast.error(err.message)
     } finally {
@@ -81,36 +117,45 @@ export default function NewMessagePage() {
     }
   }
 
+  if (fetching) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-8 h-8 border-2 border-[#D4A017] border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
   return (
     <div className="animate-fade-in max-w-2xl" dir="rtl">
       <div className="flex items-center gap-3 mb-8">
-        <Link href="/dashboard/messages" className="text-[#7A6A52] hover:text-[#1A1208]">
+        <Link href={`/dashboard/messages/${messageId}`} className="text-[#7A6A52] hover:text-[#1A1208]">
           <ArrowRight size={20} />
         </Link>
         <div>
-          <p className="section-label">رسالة جديدة</p>
-          <h1 className="page-title">اكتب رسالتك</h1>
+          <p className="section-label">تعديل الرسالة</p>
+          <h1 className="page-title">تحديث الرسالة</h1>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Title & Content */}
         <div className="card space-y-4">
           <h2 className="font-semibold text-[#1A1208] text-sm">تفاصيل الرسالة</h2>
           <div>
             <label className="block text-sm text-[#3D2F1A] mb-2">عنوان الرسالة *</label>
-            <input className="input" placeholder="مثال: رسالتي لزوجتي العزيزة"
-              value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} maxLength={200} />
+            <input className="input" value={form.title}
+              onChange={e => setForm({ ...form, title: e.target.value })} maxLength={200} />
           </div>
           <div>
             <label className="block text-sm text-[#3D2F1A] mb-2">محتوى الرسالة *</label>
-            <textarea className="input min-h-[200px] resize-y" placeholder="اكتب رسالتك هنا..."
-              value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} maxLength={10000} />
-            <p className="text-[#7A6A52] text-xs mt-1 text-left">{form.content.length}/10000</p>
+            <textarea className="input min-h-[180px] resize-y" value={form.content}
+              onChange={e => setForm({ ...form, content: e.target.value })} maxLength={10000} />
           </div>
         </div>
 
+        {/* Trigger */}
         <div className="card space-y-4">
-          <h2 className="font-semibold text-[#1A1208] text-sm">متى تُرسَل هذه الرسالة؟</h2>
+          <h2 className="font-semibold text-[#1A1208] text-sm">وقت الإرسال</h2>
           <div className="grid grid-cols-3 gap-3">
             {[
               { value: 'SWITCH', label: 'مفتاح الغياب', desc: 'عند انقطاعك' },
@@ -120,7 +165,9 @@ export default function NewMessagePage() {
               <button key={t.value} type="button"
                 onClick={() => setForm({ ...form, triggerType: t.value as any })}
                 className={`p-3 rounded-xl border text-right transition-all ${
-                  form.triggerType === t.value ? 'border-[#D4A017] bg-[#FAF3E0]' : 'border-[rgba(184,134,11,0.2)] hover:border-[#D4A017]'
+                  form.triggerType === t.value
+                    ? 'border-[#D4A017] bg-[#FAF3E0]'
+                    : 'border-[rgba(184,134,11,0.2)] hover:border-[#D4A017]'
                 }`}>
                 <p className="text-[#1A1208] text-sm font-medium">{t.label}</p>
                 <p className="text-[#7A6A52] text-xs mt-0.5">{t.desc}</p>
@@ -137,23 +184,26 @@ export default function NewMessagePage() {
           )}
         </div>
 
-        {/* Add keyholder as recipient */}
+        {/* Keyholders as recipients */}
         {keyholders.length > 0 && (
           <div className="card space-y-3">
             <h2 className="font-semibold text-[#1A1208] text-sm">إضافة شاهد موثوق كمستلم</h2>
-            <p className="text-[#7A6A52] text-xs">يمكن للشاهد الموثوق أيضاً استقبال الرسالة</p>
+            <p className="text-[#7A6A52] text-xs">يمكن للشاهد الموثوق أن يكون أيضاً مستلماً للرسالة</p>
             <div className="flex flex-wrap gap-2">
               {keyholders.map(kh => (
-                <button key={kh.id} type="button" onClick={() => addKeyholderAsRecipient(kh)}
+                <button key={kh.id} type="button"
+                  onClick={() => addKeyholderAsRecipient(kh)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[rgba(184,134,11,0.3)] bg-[#FAF3E0] text-sm text-[#3D2F1A] hover:border-[#D4A017] transition-all">
                   <span className="text-[#B8860B]">👤</span>
-                  {kh.name} <Plus size={12} className="text-[#B8860B]" />
+                  {kh.name}
+                  <Plus size={12} className="text-[#B8860B]" />
                 </button>
               ))}
             </div>
           </div>
         )}
 
+        {/* Recipients */}
         <div className="card space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-[#1A1208] text-sm">المستلمون ({recipients.length}/10)</h2>
@@ -166,7 +216,7 @@ export default function NewMessagePage() {
             <div key={i} className="bg-[#FDF8F0] border border-[rgba(184,134,11,0.15)] rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[#B8860B] text-xs font-medium flex items-center gap-1">
-                  {r.isKeyholder && '👤 شاهد موثوق · '}مستلم {i + 1}
+                  {r.isKeyholder && <span>👤 شاهد موثوق · </span>}مستلم {i + 1}
                 </span>
                 {recipients.length > 1 && (
                   <button type="button" onClick={() => removeRecipient(i)} className="text-red-400 hover:text-red-600">
@@ -208,18 +258,15 @@ export default function NewMessagePage() {
           ))}
         </div>
 
-        <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4">
-          <span className="text-blue-600 text-lg">💾</span>
-          <p className="text-blue-800 text-sm">ستُحفظ رسالتك في <strong>Google Drive</strong> كنسخة احتياطية آمنة.</p>
-        </div>
-
         <div className="flex gap-3">
           <button type="submit" disabled={loading}
             className="btn-primary flex-1 flex items-center justify-center gap-2">
-            {loading && <div className="w-4 h-4 border-2 border-[#D4A017] border-t-transparent rounded-full animate-spin" />}
-            {loading ? 'جارٍ الحفظ...' : 'حفظ الرسالة ✓'}
+            {loading
+              ? <div className="w-4 h-4 border-2 border-[#D4A017] border-t-transparent rounded-full animate-spin" />
+              : <Save size={15} />}
+            {loading ? 'جارٍ الحفظ...' : 'حفظ التعديلات'}
           </button>
-          <Link href="/dashboard/messages" className="btn-secondary px-6">إلغاء</Link>
+          <Link href={`/dashboard/messages/${messageId}`} className="btn-secondary px-6">إلغاء</Link>
         </div>
       </form>
     </div>

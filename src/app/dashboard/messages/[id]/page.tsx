@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowRight, Calendar, Users, HardDrive, Trash2, FileText } from 'lucide-react'
+import { ArrowRight, Calendar, Users, HardDrive, FileText, Pencil } from 'lucide-react'
 import { format } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import DeleteMessageButton from './DeleteMessageButton'
@@ -16,7 +16,7 @@ const statusBadge: Record<string, string> = {
   ACTIVE: 'badge-green', SENT: 'badge-gold', DRAFT: 'badge-gray', FAILED: 'badge-red'
 }
 const statusLabel: Record<string, string> = {
-  ACTIVE: 'نشط', SENT: 'أُرسل', DRAFT: 'مسودة', FAILED: 'فشل الإرسال'
+  ACTIVE: 'نشط', SENT: 'أُرسل', DRAFT: 'مسودة', FAILED: 'فشل'
 }
 const channelLabel: Record<string, string> = {
   EMAIL: '✉️ بريد إلكتروني', WHATSAPP: '💬 واتساب', SMS: '📱 رسالة نصية'
@@ -33,7 +33,6 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
 
   return (
     <div className="animate-fade-in max-w-2xl space-y-6" dir="rtl">
-      {/* Header */}
       <div className="flex items-center gap-3">
         <Link href="/dashboard/messages" className="text-[#7A6A52] hover:text-[#1A1208]">
           <ArrowRight size={20} />
@@ -47,7 +46,6 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
         </span>
       </div>
 
-      {/* Content */}
       <div className="card space-y-3">
         <div className="flex items-center gap-2 mb-1">
           <FileText size={15} className="text-[#B8860B]" />
@@ -58,7 +56,6 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
         </p>
       </div>
 
-      {/* Trigger */}
       <div className="card space-y-3">
         <h2 className="font-semibold text-[#1A1208] text-sm flex items-center gap-2">
           <Calendar size={15} className="text-[#B8860B]" /> وقت الإرسال
@@ -81,7 +78,6 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
         </div>
       </div>
 
-      {/* Recipients */}
       <div className="card space-y-3">
         <h2 className="font-semibold text-[#1A1208] text-sm flex items-center gap-2">
           <Users size={15} className="text-[#B8860B]" /> المستلمون ({message.recipients.length})
@@ -104,29 +100,23 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
         </div>
       </div>
 
-      {/* Drive status */}
       {message.driveFileId && (
         <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4">
           <HardDrive size={16} className="text-blue-600 flex-shrink-0" />
           <div>
             <p className="text-blue-800 text-sm font-medium">محفوظة في Google Drive</p>
-            <a
-              href={`https://drive.google.com/file/d/${message.driveFileId}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-600 text-xs hover:underline"
-            >
-              عرض الملف ←
-            </a>
+            <a href={`https://drive.google.com/file/d/${message.driveFileId}`}
+              target="_blank" rel="noreferrer"
+              className="text-blue-600 text-xs hover:underline">عرض الملف ←</a>
           </div>
         </div>
       )}
 
-      {/* Actions */}
       {message.status !== 'SENT' && (
         <div className="flex items-center gap-3 pt-2">
-          <Link href={`/dashboard/messages/${message.id}/edit`} className="btn-secondary text-sm flex-1 text-center py-2.5">
-            تعديل الرسالة
+          <Link href={`/dashboard/messages/${message.id}/edit`}
+            className="btn-primary flex-1 flex items-center justify-center gap-2 text-sm">
+            <Pencil size={14} /> تعديل الرسالة
           </Link>
           <DeleteMessageButton messageId={message.id} />
         </div>
