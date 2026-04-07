@@ -49,6 +49,15 @@ async function getOAuth2Client(userId: string) {
     where: { userId, provider: 'google' },
   })
 
+  console.log('[Drive] getOAuth2Client called for user:', userId)
+  console.log('[Drive] Account check:', {
+    accountExists: !!account,
+    hasAccessToken: !!account?.access_token,
+    hasRefreshToken: !!account?.refresh_token,
+    hasScope: !!account?.scope,
+    scopeValue: account?.scope || 'null',
+  })
+
   if (!account) {
     throw new DriveError(
       'No Google account linked',
@@ -58,6 +67,15 @@ async function getOAuth2Client(userId: string) {
   }
 
   if (!account.access_token) {
+    console.error('[Drive] No access token found. Account details:', {
+      accountId: account.id,
+      userId: account.userId,
+      provider: account.provider,
+      scope: account.scope,
+      refresh_token: !!account.refresh_token,
+      tokenType: account.token_type,
+      expiresAt: account.expires_at,
+    })
     throw new DriveError(
       'Access token missing',
       'NO_ACCESS_TOKEN',

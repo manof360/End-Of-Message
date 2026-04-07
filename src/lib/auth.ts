@@ -47,28 +47,58 @@ export const authOptions: NextAuthOptions = {
 
   callbacks: {
     async signIn({ user, account }: { user: User; account: Account | null }) {
-      if (user?.id && account) {
+      if (user?.id && account && account.provider === 'google') {
         try {
-          // Save account data including scope and tokens
-          if (account.provider === 'google' && account.scope) {
-            // Scope might be space-separated or comma-separated
-            const normalizedScope = account.scope.replace(/,/g, ' ')
-            
-            // Update account with scope if not already saved
-            const existingAccount = await prisma.account.findFirst({
-              where: {
-                userId: user.id,
-                provider: 'google',
-              },
-            })
+          console.log('[Auth] signIn callback - Google account:', {
+            userId: user.id,
+            hasAccessToken: !!account.access_token,
+            hasRefreshToken: !!account.refresh_token,
+            hasScope: !!account.scope,
+          })
 
-            if (existingAccount && !existingAccount.scope) {
-              await prisma.account.update({
-                where: { id: existingAccount.id },
-                data: { scope: normalizedScope },
-              })
-            }
-          }
+          // **IMPORTANT**: Explicitly save/update the account with all tokens
+          // PrismaAdapter creates it, but we need to ensure tokens are saved
+          const normalizedScope = account.scope?.replace(/,/g, ' ') || ''
+
+          // Upsert account to ensure it's saved with tokens
+          const savedAccount = await prisma.account.upsert({
+            where: {
+              provider_providerAccountId: {
+                provider: 'google',
+                providerAccountId: account.providerAccountId,
+              },
+            },
+            update: {
+              // Update tokens if they changed
+              access_token: account.access_token,
+              refresh_token: account.refresh_token ?? undefined,
+              expires_at: account.expires_at,
+              scope: normalizedScope,
+              token_type: account.token_type,
+              id_token: account.id_token,
+              session_state: account.session_state,
+            },
+            create: {
+              userId: user.id,
+              type: account.type,
+              provider: account.provider,
+              providerAccountId: account.providerAccountId,
+              access_token: account.access_token,
+              refresh_token: account.refresh_token,
+              expires_at: account.expires_at,
+              token_type: account.token_type,
+              scope: normalizedScope,
+              id_token: account.id_token,
+              session_state: account.session_state,
+            },
+          })
+
+          console.log('[Auth] Account saved successfully:', {
+            accountId: savedAccount.id,
+            hasAccessToken: !!savedAccount.access_token,
+            hasRefreshToken: !!savedAccount.refresh_token,
+            scope: savedAccount.scope,
+          })
 
           // Reset dead man's switch on every login
           await prisma.user.update({
@@ -89,7 +119,11 @@ export const authOptions: NextAuthOptions = {
           })
         } catch (error) {
           console.error('[Auth] Error in signIn callback:', error)
-          // Don't block sign-in on callback error
+          // Don't block sign-in on callback error, but log it
+          console.error('[Auth] Callback error details:', {
+            message: (error as any)?.message,
+            code: (error as any)?.code,
+          })
         }
       }
       return true
