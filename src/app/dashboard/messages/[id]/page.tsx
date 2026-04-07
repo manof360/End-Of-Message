@@ -64,7 +64,7 @@ export default async function MessageDetailPage({ params }: { params: { id: stri
           <span className="text-[#3D2F1A] text-sm">{triggerLabels[message.triggerType]}</span>
           {message.triggerType === 'DATE' && message.scheduledAt && (
             <span className="badge badge-gold">
-              {format(new Date(message.scheduledAt), 'dd MMMM yyyy — HH:mm', { locale: ar })}
+              {format(new Date(message.scheduledAt), 'dd MMMM yyyy', { locale: ar })} • {format(new Date(message.scheduledAt), 'HH:mm', { locale: ar })}
             </span>
           )}
         </div>

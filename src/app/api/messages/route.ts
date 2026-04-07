@@ -74,13 +74,33 @@ export async function POST(req: NextRequest) {
 
   const { title, content, triggerType, scheduledAt, recipients } = parsed.data
 
+  // معالجة صحيحة للتاريخ والوقت
+  // صيغة الإدخال: "YYYY-MM-DD HH:mm"
+  let parsedScheduledAt: Date | null = null
+  if (scheduledAt && triggerType === 'DATE') {
+    // مثال: "2026-04-08 15:30"
+    const [date, time] = scheduledAt.split(' ')
+    if (date && time) {
+      const [year, month, day] = date.split('-')
+      const [hour, minute] = time.split(':')
+      parsedScheduledAt = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hour),
+        parseInt(minute),
+        0
+      )
+    }
+  }
+
   const message = await prisma.message.create({
     data: {
       userId: session.user.id,
       title,
       content,
       triggerType,
-      scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+      scheduledAt: parsedScheduledAt,
       status: 'ACTIVE',
       recipients: {
         create: recipients.map(r => ({

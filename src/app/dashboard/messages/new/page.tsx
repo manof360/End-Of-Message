@@ -16,7 +16,8 @@ export default function NewMessagePage() {
     title: '',
     content: '',
     triggerType: 'SWITCH' as 'SWITCH' | 'DATE' | 'KEYHOLDER',
-    scheduledAt: '',
+    scheduledDate: '',
+    scheduledTime: '09:00', // صيغة 24 ساعة
   })
   const [recipients, setRecipients] = useState<Recipient[]>([
     { name: '', email: '', phone: '', channel: 'EMAIL' },
@@ -56,12 +57,21 @@ export default function NewMessagePage() {
 
     setLoading(true)
     try {
+      // بناء التاريخ والوقت بشكل آمن
+      let scheduledAt: string | null = null
+      if (form.triggerType === 'DATE' && form.scheduledDate && form.scheduledTime) {
+        // التنسيق: YYYY-MM-DD HH:mm
+        scheduledAt = `${form.scheduledDate} ${form.scheduledTime}`
+      }
+
       const res = await fetch('/api/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...form,
-          scheduledAt: form.triggerType === 'DATE' ? new Date(form.scheduledAt).toISOString() : null,
+          title: form.title,
+          content: form.content,
+          triggerType: form.triggerType,
+          scheduledAt,
           recipients: recipients.map(r => ({
             name: r.name,
             email: r.email || undefined,
@@ -128,11 +138,22 @@ export default function NewMessagePage() {
             ))}
           </div>
           {form.triggerType === 'DATE' && (
-            <div>
-              <label className="block text-xs md:text-sm text-[#3D2F1A] mb-2">التاريخ والوقت *</label>
-              <input type="datetime-local" className="input text-sm" value={form.scheduledAt}
-                onChange={e => setForm({ ...form, scheduledAt: e.target.value })}
-                min={new Date().toISOString().slice(0, 16)} />
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs md:text-sm text-[#3D2F1A] mb-2">التاريخ *</label>
+                  <input type="date" className="input text-sm" value={form.scheduledDate}
+                    onChange={e => setForm({ ...form, scheduledDate: e.target.value })}
+                    min={new Date().toISOString().split('T')[0]} />
+                </div>
+                <div>
+                  <label className="block text-xs md:text-sm text-[#3D2F1A] mb-2">الوقت (24 ساعة) *</label>
+                  <input type="time" className="input text-sm" value={form.scheduledTime}
+                    onChange={e => setForm({ ...form, scheduledTime: e.target.value })}
+                    placeholder="HH:mm" />
+                </div>
+              </div>
+              <p className="text-[#7A6A52] text-xs">سيتم إرسال الرسالة في التاريخ والوقت المحدد بتوقيت الموقع</p>
             </div>
           )}
         </div>

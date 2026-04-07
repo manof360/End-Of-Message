@@ -84,7 +84,7 @@ export default async function MessagesPage() {
                     <Calendar size={12} className="flex-shrink-0" />
                     <span className="truncate">{triggerLabels[msg.triggerType]}</span>
                     {msg.triggerType === 'DATE' && msg.scheduledAt && (
-                      <span className="text-[#B8860B] whitespace-nowrap"> · {format(new Date(msg.scheduledAt), 'dd/MM', { locale: ar })}</span>
+                      <span className="text-[#B8860B] whitespace-nowrap"> · {format(new Date(msg.scheduledAt), 'dd/MM • HH:mm', { locale: ar })}</span>
                     )}
                   </span>
                   <span className="flex items-center gap-1">

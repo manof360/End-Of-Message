@@ -35,14 +35,31 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 
   // Update message fields
+  let parsedScheduledAt: Date | null = null
+  if (body.triggerType === 'DATE' && body.scheduledAt) {
+    // معالجة صيغة "YYYY-MM-DD HH:mm"
+    const [date, time] = body.scheduledAt.split(' ')
+    if (date && time) {
+      const [year, month, day] = date.split('-')
+      const [hour, minute] = time.split(':')
+      parsedScheduledAt = new Date(
+        parseInt(year),
+        parseInt(month) - 1,
+        parseInt(day),
+        parseInt(hour),
+        parseInt(minute),
+        0
+      )
+    }
+  }
+
   const updated = await prisma.message.update({
     where: { id: params.id },
     data: {
       ...(body.title && { title: body.title }),
       ...(body.content && { content: body.content }),
       ...(body.triggerType && { triggerType: body.triggerType }),
-      scheduledAt: body.triggerType === 'DATE' && body.scheduledAt
-        ? new Date(body.scheduledAt) : null,
+      scheduledAt: parsedScheduledAt,
     },
   })
 

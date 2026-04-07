@@ -19,7 +19,8 @@ export default function EditMessagePage() {
   const [form, setForm] = useState({
     title: '', content: '',
     triggerType: 'SWITCH' as 'SWITCH' | 'DATE' | 'KEYHOLDER',
-    scheduledAt: '',
+    scheduledDate: '',
+    scheduledTime: '09:00', // صيغة 24 ساعة
   })
   const [recipients, setRecipients] = useState<Recipient[]>([
     { name: '', email: '', phone: '', channel: 'EMAIL' },
@@ -37,11 +38,21 @@ export default function EditMessagePage() {
 
         if (msgData.success) {
           const m = msgData.data
+          let scheduledDate = ''
+          let scheduledTime = '09:00'
+          
+          if (m.scheduledAt) {
+            const date = new Date(m.scheduledAt)
+            scheduledDate = date.toISOString().split('T')[0] // YYYY-MM-DD
+            scheduledTime = `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}` // HH:mm
+          }
+          
           setForm({
             title: m.title,
             content: m.content,
             triggerType: m.triggerType,
-            scheduledAt: m.scheduledAt ? new Date(m.scheduledAt).toISOString().slice(0, 16) : '',
+            scheduledDate,
+            scheduledTime,
           })
           setRecipients(m.recipients.map((r: any) => ({
             id: r.id, name: r.name,
@@ -92,12 +103,20 @@ export default function EditMessagePage() {
 
     setLoading(true)
     try {
+      // بناء التاريخ والوقت بشكل آمن
+      let scheduledAt: string | null = null
+      if (form.triggerType === 'DATE' && form.scheduledDate && form.scheduledTime) {
+        scheduledAt = `${form.scheduledDate} ${form.scheduledTime}`
+      }
+
       const res = await fetch(`/api/messages/${messageId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...form,
-          scheduledAt: form.triggerType === 'DATE' ? form.scheduledAt : null,
+          title: form.title,
+          content: form.content,
+          triggerType: form.triggerType,
+          scheduledAt,
           recipients: recipients.map(r => ({
             name: r.name,
             email: r.email || undefined,
@@ -175,10 +194,24 @@ export default function EditMessagePage() {
             ))}
           </div>
           {form.triggerType === 'DATE' && (
-            <div>
-              <label className="block text-sm text-[#3D2F1A] mb-2">التاريخ والوقت *</label>
-              <input type="datetime-local" className="input" value={form.scheduledAt}
-                onChange={e => setForm({ ...form, scheduledAt: e.target.value })}
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm text-[#3D2F1A] mb-2">التاريخ *</label>
+                  <input type="date" className="input" value={form.scheduledDate}
+                    onChange={e => setForm({ ...form, scheduledDate: e.target.value })}
+                    min={new Date().toISOString().split('T')[0]} />
+                </div>
+                <div>
+                  <label className="block text-sm text-[#3D2F1A] mb-2">الوقت (24 ساعة) *</label>
+                  <input type="time" className="input" value={form.scheduledTime}
+                    onChange={e => setForm({ ...form, scheduledTime: e.target.value })}
+                    placeholder="HH:mm" />
+                </div>
+              </div>
+              <p className="text-[#7A6A52] text-xs">سيتم إرسال الرسالة في التاريخ والوقت المحدد بتوقيت الموقع</p>
+            </div>
+          )}
                 min={new Date().toISOString().slice(0, 16)} />
             </div>
           )}
