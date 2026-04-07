@@ -9,10 +9,10 @@ export async function sendEmail({ to, subject, html }: EmailOptions): Promise<bo
     return false
   }
 
-  // IMPORTANT: With Resend free tier, 'from' MUST be onboarding@resend.dev
+  // IMPORTANT: With Resend free tier, 'from' MUST be a verified sender
   // or a verified domain. Do NOT use Arabic names or display names.
-  // Once you verify a domain in Resend dashboard, change this to: noreply@yourdomain.com
-  const from = 'Wasiyati <onboarding@resend.dev>'
+  // Set EMAIL_FROM in environment variables (e.g., no-reply@yourdomain.com)
+  const from = process.env.EMAIL_FROM || 'Wasiyati <onboarding@resend.dev>'
 
   try {
     const res = await fetch('https://api.resend.com/emails', {

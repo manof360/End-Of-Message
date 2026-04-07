@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Wasiyati <onboarding@resend.dev>',
+        from: process.env.EMAIL_FROM || 'Wasiyati <onboarding@resend.dev>',
         to,
         subject: '✅ اختبار وصيتي — نظام الإيميل يعمل',
         html,

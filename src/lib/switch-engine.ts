@@ -1,6 +1,21 @@
 // src/lib/switch-engine.ts
+import { Prisma } from '@prisma/client'
 import { prisma } from './prisma'
 import { sendEmail } from './email'
+
+// Type for user with messages included
+type UserWithMessages = Prisma.UserGetPayload<{
+  include: {
+    messages: {
+      include: { recipients: true }
+    }
+  }
+}>
+
+// Type for message with recipients
+type MessageWithRecipients = Prisma.MessageGetPayload<{
+  include: { recipients: true }
+}>
 
 /**
  * Main cron job function - run daily
@@ -61,7 +76,7 @@ export async function processSwitches() {
     } else {
       // Stage 3: TRIGGER — send all messages
       if (user.switchStatus === 'CRITICAL') {
-        await triggerMessages(user.id, user.messages as any)
+        await triggerMessages(user.id, user.messages)
         await prisma.user.update({
           where: { id: user.id },
           data: { switchStatus: 'TRIGGERED' },
@@ -94,7 +109,8 @@ async function processDateTriggers() {
   })
 
   for (const message of scheduledMessages) {
-    await triggerMessages(message.userId, [message] as any)
+    const messages: MessageWithRecipients[] = [message as MessageWithRecipients]
+    await triggerMessages(message.userId, messages)
     console.log(`[Switch Engine] Date-triggered message sent: ${message.id}`)
   }
 }
@@ -102,7 +118,7 @@ async function processDateTriggers() {
 /**
  * Actually send all messages for a user
  */
-export async function triggerMessages(userId: string, messages: any[]) {
+export async function triggerMessages(userId: string, messages: MessageWithRecipients[]) {
   for (const message of messages) {
     for (const recipient of message.recipients) {
       try {
