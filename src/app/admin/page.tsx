@@ -1,15 +1,17 @@
 'use client'
-// src/app/admin/page.tsx
+// src/app/admin/page.tsx — v1.1.0
 import { useEffect, useState, useCallback } from 'react'
 import Image from 'next/image'
 import { formatDistanceToNow } from 'date-fns'
 import { ar } from 'date-fns/locale'
 import {
-  Users, FileText, Bell, TrendingUp,
-  Search, Shield, ChevronLeft, ChevronRight,
-  RefreshCw, Crown, UserCheck
+  Users, FileText, Bell, TrendingUp, Search,
+  Shield, ChevronLeft, ChevronRight, RefreshCw,
+  Crown, UserCheck, Mail, CheckCircle, XCircle, Send
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+const APP_VERSION = '1.1.0'
 
 type Stats = {
   totalUsers: number; activeUsers: number; totalMessages: number
@@ -21,8 +23,6 @@ type UserRow = {
   createdAt: string; lastLoginAt: string; _count: { messages: number }
 }
 
-const planColors: Record<string, string> = { FREE: 'badge-gray', BASIC: 'badge-gold', PREMIUM: 'badge-green' }
-const planLabels: Record<string, string> = { FREE: 'مجاني', BASIC: 'أساسي', PREMIUM: 'بريميوم' }
 const switchColors: Record<string, string> = {
   ACTIVE: 'badge-green', WARNING: 'badge-yellow',
   CRITICAL: 'badge-red', TRIGGERED: 'badge-red', PAUSED: 'badge-gray'
@@ -42,11 +42,15 @@ export default function AdminPage() {
   const [refreshing, setRefreshing] = useState(false)
   const [updating, setUpdating] = useState<string | null>(null)
 
+  // Email test state
+  const [testEmail, setTestEmail] = useState('')
+  const [emailTesting, setEmailTesting] = useState(false)
+  const [emailResult, setEmailResult] = useState<'success' | 'fail' | null>(null)
+
   const totalPages = Math.ceil(total / 20)
 
   const fetchData = useCallback(async (showRefresh = false) => {
-    if (showRefresh) setRefreshing(true)
-    else setLoading(true)
+    if (showRefresh) setRefreshing(true); else setLoading(true)
     try {
       const [sRes, uRes] = await Promise.all([
         fetch('/api/admin/stats'),
@@ -78,6 +82,29 @@ export default function AdminPage() {
     finally { setUpdating(null) }
   }
 
+  const sendTestEmail = async () => {
+    if (!testEmail || !testEmail.includes('@')) return toast.error('أدخل بريداً إلكترونياً صحيحاً')
+    setEmailTesting(true); setEmailResult(null)
+    try {
+      const res = await fetch('/api/admin/test-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: testEmail }),
+      })
+      const json = await res.json()
+      if (json.success) {
+        setEmailResult('success')
+        toast.success('✅ تم الإرسال! تحقق من بريدك')
+      } else {
+        setEmailResult('fail')
+        toast.error(`فشل الإرسال: ${json.error}`)
+      }
+    } catch {
+      setEmailResult('fail')
+      toast.error('خطأ في الاتصال')
+    } finally { setEmailTesting(false) }
+  }
+
   const statCards = stats ? [
     { label: 'إجمالي المستخدمين', value: stats.totalUsers, icon: Users, sub: `+${stats.newUsersThisMonth} هذا الشهر`, color: 'text-[#D4A017]' },
     { label: 'مستخدمون نشطون', value: stats.activeUsers, icon: UserCheck, sub: 'مفتاح نشط', color: 'text-green-400' },
@@ -89,7 +116,8 @@ export default function AdminPage() {
 
   return (
     <div className="animate-fade-in space-y-8" dir="rtl">
-      {/* Header */}
+
+      {/* Header with version */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#1A1208] rounded-xl flex items-center justify-center">
@@ -97,26 +125,23 @@ export default function AdminPage() {
           </div>
           <div>
             <p className="section-label">لوحة الإدارة</p>
-            <h1 className="page-title">إدارة وصيتي</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="page-title">إدارة وصيتي</h1>
+              <span className="badge badge-gold text-xs">v{APP_VERSION}</span>
+            </div>
           </div>
         </div>
         <button onClick={() => fetchData(true)}
           className="btn-secondary text-sm flex items-center gap-2 py-2 px-4">
-          <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} />
-          تحديث
+          <RefreshCw size={14} className={refreshing ? 'animate-spin' : ''} /> تحديث
         </button>
       </div>
 
       {/* Stats */}
-      {loading && !stats ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="stat-card animate-pulse h-24" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {statCards.map(({ label, value, icon: Icon, sub, color }) => (
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        {loading && !stats
+          ? [...Array(6)].map((_, i) => <div key={i} className="stat-card animate-pulse h-24" />)
+          : statCards.map(({ label, value, icon: Icon, sub, color }) => (
             <div key={label} className="stat-card text-right">
               <div className="flex items-start justify-between mb-3">
                 <div className="w-8 h-8 bg-[rgba(184,134,11,0.15)] rounded-lg flex items-center justify-center">
@@ -127,9 +152,57 @@ export default function AdminPage() {
               <p className="text-[rgba(253,248,240,0.8)] text-sm font-medium">{label}</p>
               <p className="text-[rgba(253,248,240,0.35)] text-xs mt-0.5">{sub}</p>
             </div>
-          ))}
+          ))
+        }
+      </div>
+
+      {/* Email Test Section */}
+      <div className="card space-y-4">
+        <div className="flex items-center gap-2">
+          <Mail size={16} className="text-[#B8860B]" />
+          <h2 className="font-semibold text-[#1A1208]">اختبار إرسال الإيميل</h2>
         </div>
-      )}
+        <p className="text-[#7A6A52] text-sm">تحقق من أن نظام الإيميل يعمل بشكل صحيح</p>
+
+        <div className="flex gap-3">
+          <input
+            type="email"
+            className="input flex-1 text-sm"
+            placeholder="أدخل بريدك الإلكتروني للاختبار..."
+            value={testEmail}
+            onChange={e => { setTestEmail(e.target.value); setEmailResult(null) }}
+            dir="ltr"
+          />
+          <button
+            onClick={sendTestEmail}
+            disabled={emailTesting}
+            className="btn-primary flex items-center gap-2 text-sm px-5 whitespace-nowrap"
+          >
+            {emailTesting
+              ? <RefreshCw size={14} className="animate-spin" />
+              : <Send size={14} />
+            }
+            {emailTesting ? 'جارٍ الإرسال...' : 'إرسال تجريبي'}
+          </button>
+        </div>
+
+        {emailResult && (
+          <div className={`flex items-center gap-3 p-3 rounded-xl text-sm ${
+            emailResult === 'success'
+              ? 'bg-green-50 border border-green-200 text-green-800'
+              : 'bg-red-50 border border-red-200 text-red-800'
+          }`}>
+            {emailResult === 'success'
+              ? <CheckCircle size={16} className="text-green-600 flex-shrink-0" />
+              : <XCircle size={16} className="text-red-600 flex-shrink-0" />
+            }
+            {emailResult === 'success'
+              ? `✅ الإيميل أُرسل بنجاح إلى ${testEmail} — تحقق من صندوق الوارد (أو Spam)`
+              : '❌ فشل الإرسال — تحقق من RESEND_API_KEY في Vercel'
+            }
+          </div>
+        )}
+      </div>
 
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
@@ -160,8 +233,8 @@ export default function AdminPage() {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
-                [...Array(5)].map((_, i) => (
+              {loading
+                ? [...Array(5)].map((_, i) => (
                   <tr key={i}>
                     {[...Array(6)].map((_, j) => (
                       <td key={j} className="px-5 py-4">
@@ -170,109 +243,93 @@ export default function AdminPage() {
                     ))}
                   </tr>
                 ))
-              ) : users.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center py-12 text-[#7A6A52]">لا توجد نتائج</td>
-                </tr>
-              ) : users.map(user => (
-                <tr key={user.id}
-                  className="border-b border-[rgba(184,134,11,0.08)] hover:bg-[#FAF3E0] transition-colors">
-
-                  {/* User */}
-                  <td className="px-5 py-4">
-                    <div className="flex items-center gap-3">
-                      {user.image ? (
-                        <Image src={user.image} alt="" width={32} height={32} className="rounded-full flex-shrink-0" />
-                      ) : (
-                        <div className="w-8 h-8 bg-[#FAF3E0] rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-[#B8860B] text-xs font-bold">
-                            {(user.name || user.email || '?')[0].toUpperCase()}
-                          </span>
+                : users.length === 0
+                  ? <tr><td colSpan={6} className="text-center py-12 text-[#7A6A52]">لا توجد نتائج</td></tr>
+                  : users.map(user => (
+                    <tr key={user.id} className="border-b border-[rgba(184,134,11,0.08)] hover:bg-[#FAF3E0] transition-colors">
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-3">
+                          {user.image
+                            ? <Image src={user.image} alt="" width={32} height={32} className="rounded-full flex-shrink-0" />
+                            : <div className="w-8 h-8 bg-[#FAF3E0] rounded-full flex items-center justify-center flex-shrink-0">
+                                <span className="text-[#B8860B] text-xs font-bold">
+                                  {(user.name || user.email || '?')[0].toUpperCase()}
+                                </span>
+                              </div>
+                          }
+                          <div className="min-w-0">
+                            <p className="text-[#1A1208] text-sm font-medium truncate max-w-[150px] flex items-center gap-1">
+                              {user.name || 'بدون اسم'}
+                              {user.role === 'ADMIN' && <Crown size={11} className="text-[#D4A017] flex-shrink-0" />}
+                            </p>
+                            <p className="text-[#7A6A52] text-xs truncate max-w-[150px]">{user.email}</p>
+                          </div>
                         </div>
-                      )}
-                      <div className="min-w-0">
-                        <p className="text-[#1A1208] text-sm font-medium truncate max-w-[150px]">
-                          {user.name || 'بدون اسم'}
-                          {user.role === 'ADMIN' && <Crown size={12} className="inline mr-1 text-[#D4A017]" />}
-                        </p>
-                        <p className="text-[#7A6A52] text-xs truncate max-w-[150px]">{user.email}</p>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Plan */}
-                  <td className="px-5 py-4">
-                    <select
-                      className="text-xs border border-[rgba(184,134,11,0.25)] rounded-lg px-2 py-1.5 bg-white text-[#1A1208] cursor-pointer hover:border-[#D4A017] disabled:opacity-40 transition-colors"
-                      value={user.plan}
-                      disabled={updating === user.id}
-                      onChange={e => updateUser(user.id, { plan: e.target.value })}>
-                      <option value="FREE">مجاني</option>
-                      <option value="BASIC">أساسي</option>
-                      <option value="PREMIUM">بريميوم</option>
-                    </select>
-                  </td>
-
-                  {/* Switch status */}
-                  <td className="px-5 py-4">
-                    <span className={`badge ${switchColors[user.switchStatus] || 'badge-gray'}`}>
-                      {switchLabels[user.switchStatus] || user.switchStatus}
-                    </span>
-                  </td>
-
-                  {/* Messages count */}
-                  <td className="px-5 py-4">
-                    <span className="text-[#1A1208] text-sm font-semibold">{user._count.messages}</span>
-                  </td>
-
-                  {/* Last login */}
-                  <td className="px-5 py-4">
-                    <span className="text-[#7A6A52] text-xs">
-                      {formatDistanceToNow(new Date(user.lastLoginAt), { locale: ar, addSuffix: true })}
-                    </span>
-                  </td>
-
-                  {/* Role */}
-                  <td className="px-5 py-4">
-                    <select
-                      className="text-xs border border-[rgba(184,134,11,0.25)] rounded-lg px-2 py-1.5 bg-white text-[#1A1208] cursor-pointer hover:border-[#D4A017] disabled:opacity-40 transition-colors"
-                      value={user.role}
-                      disabled={updating === user.id}
-                      onChange={e => updateUser(user.id, { role: e.target.value })}>
-                      <option value="USER">مستخدم</option>
-                      <option value="ADMIN">أدمن</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
+                      </td>
+                      <td className="px-5 py-4">
+                        <select
+                          className="text-xs border border-[rgba(184,134,11,0.25)] rounded-lg px-2 py-1.5 bg-white text-[#1A1208] cursor-pointer hover:border-[#D4A017] disabled:opacity-40 transition-colors"
+                          value={user.plan} disabled={updating === user.id}
+                          onChange={e => updateUser(user.id, { plan: e.target.value })}>
+                          <option value="FREE">مجاني</option>
+                          <option value="BASIC">أساسي</option>
+                          <option value="PREMIUM">بريميوم</option>
+                        </select>
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className={`badge ${switchColors[user.switchStatus] || 'badge-gray'}`}>
+                          {switchLabels[user.switchStatus] || user.switchStatus}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className="text-[#1A1208] text-sm font-semibold">{user._count.messages}</span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <span className="text-[#7A6A52] text-xs">
+                          {formatDistanceToNow(new Date(user.lastLoginAt), { locale: ar, addSuffix: true })}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <select
+                          className="text-xs border border-[rgba(184,134,11,0.25)] rounded-lg px-2 py-1.5 bg-white text-[#1A1208] cursor-pointer hover:border-[#D4A017] disabled:opacity-40 transition-colors"
+                          value={user.role} disabled={updating === user.id}
+                          onChange={e => updateUser(user.id, { role: e.target.value })}>
+                          <option value="USER">مستخدم</option>
+                          <option value="ADMIN">أدمن</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))
+              }
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between px-5 py-4 border-t border-[rgba(184,134,11,0.1)] bg-[#FEFCF8]">
             <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-              className="flex items-center gap-1 text-sm text-[#7A6A52] disabled:opacity-30 hover:text-[#1A1208] transition-colors">
+              className="flex items-center gap-1 text-sm text-[#7A6A52] disabled:opacity-30 hover:text-[#1A1208]">
               <ChevronRight size={16} /> السابق
             </button>
             <div className="flex items-center gap-2">
-              {[...Array(Math.min(totalPages, 5))].map((_, i) => {
-                const p = i + 1
-                return (
-                  <button key={p} onClick={() => setPage(p)}
-                    className={`w-8 h-8 rounded-lg text-sm transition-colors ${
-                      page === p ? 'bg-[#1A1208] text-[#D4A017]' : 'text-[#7A6A52] hover:bg-[#F5EDD8]'
-                    }`}>{p}</button>
-                )
-              })}
+              {[...Array(Math.min(totalPages, 5))].map((_, i) => (
+                <button key={i+1} onClick={() => setPage(i+1)}
+                  className={`w-8 h-8 rounded-lg text-sm transition-colors ${
+                    page === i+1 ? 'bg-[#1A1208] text-[#D4A017]' : 'text-[#7A6A52] hover:bg-[#F5EDD8]'
+                  }`}>{i+1}</button>
+              ))}
             </div>
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-              className="flex items-center gap-1 text-sm text-[#7A6A52] disabled:opacity-30 hover:text-[#1A1208] transition-colors">
+              className="flex items-center gap-1 text-sm text-[#7A6A52] disabled:opacity-30 hover:text-[#1A1208]">
               التالي <ChevronLeft size={16} />
             </button>
           </div>
         )}
+      </div>
+
+      {/* Version footer */}
+      <div className="text-center text-[#7A6A52] text-xs py-2">
+        وصيتي — الإصدار {APP_VERSION} · {new Date().getFullYear()}
       </div>
     </div>
   )
