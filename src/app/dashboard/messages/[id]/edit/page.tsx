@@ -212,9 +212,6 @@ export default function EditMessagePage() {
               <p className="text-[#7A6A52] text-xs">سيتم إرسال الرسالة في التاريخ والوقت المحدد بتوقيت الموقع</p>
             </div>
           )}
-                min={new Date().toISOString().slice(0, 16)} />
-            </div>
-          )}
         </div>
 
         {/* Keyholders as recipients */}

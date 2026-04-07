@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     // Get current user's session
     const currentUserSession = await prisma.session.findFirst({
       where: { userId: session.user.id },
-      select: { expiresAt: true },
+      select: { expires: true },
     })
 
     // Get current user's account
@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
       currentUser: {
         userId: session.user.id,
         email: session.user.email,
-        sessionExpires: currentUserSession?.expiresAt?.toISOString() || null,
+        sessionExpires: currentUserSession?.expires?.toISOString() || null,
         hasGoogleAccount: !!currentUserAccount,
         googleAccount: currentUserAccount
           ? {

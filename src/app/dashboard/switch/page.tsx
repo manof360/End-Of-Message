@@ -107,7 +107,7 @@ export default function SwitchPage() {
 
       {/* Status card */}
       <div className={`border rounded-lg md:rounded-xl p-4 md:p-5 flex flex-col sm:flex-row items-start gap-3 md:gap-4 ${statusMeta.color}`}>
-        <StatusIcon size={18} className="mt-0.5 flex-shrink-0 md:w-[22px] md:h-[22px] md:w-[22px]" />
+        <StatusIcon size={18} className="mt-0.5 flex-shrink-0 md:w-[22px] md:h-[22px]" />
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
             <span className="font-semibold text-sm md:text-base">الحالة: {statusMeta.label}</span>
