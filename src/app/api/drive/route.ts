@@ -76,11 +76,43 @@ export async function GET() {
       }, { status: 403 })
     }
 
+    // Handle Google Drive API not enabled error
+    if (msg.includes('Google Drive API has not been used') || msg.includes('drive.googleapis.com')) {
+      return NextResponse.json({
+        success: false,
+        error: 'api_not_enabled',
+        message: 'خطأ: Google Drive API غير مفعلة في Google Cloud Console',
+        details: 'يرجى القيام بالخطوات التالية:',
+        steps: [
+          '1. اذهب إلى: https://console.cloud.google.com/apis/library/drive.googleapis.com',
+          '2. اضغط الزر الأزرق "ENABLE"',
+          '3. انتظر 1-2 دقيقة',
+          '4. حاول الربط مجدداً من الموقع',
+        ],
+        documentationUrl: '/GOOGLE_DRIVE_SETUP.md',
+        debugUrl: '/api/admin/debug/google-api',
+        debug: msg,
+      }, { status: 503 })
+    }
+
+    // Handle projectId issues
+    if (msg.includes('project') && msg.includes('XXX')) {
+      return NextResponse.json({
+        success: false,
+        error: 'api_not_enabled',
+        message: 'خطأ: Google Drive API غير مفعلة للمشروع',
+        hint: 'تحقق من أن GOOGLE_CLIENT_ID و GOOGLE_CLIENT_SECRET من نفس مشروع Google Cloud',
+        debugUrl: '/api/admin/debug/google-api',
+        debug: msg,
+      }, { status: 503 })
+    }
+
     // Generic error
     return NextResponse.json({
       success: false,
       error: 'drive_error',
       message: `خطأ في الوصول إلى Google Drive: ${msg}`,
+      debugUrl: '/api/admin/debug/google-api',
       debug: msg,
     }, { status: 500 })
   }
