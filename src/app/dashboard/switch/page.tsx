@@ -98,21 +98,21 @@ export default function SwitchPage() {
     : 0
 
   return (
-    <div className="animate-fade-in max-w-2xl space-y-6" dir="rtl">
+    <div className="animate-fade-in w-full max-w-2xl mx-auto space-y-6 px-4 sm:px-6 md:px-0" dir="rtl">
       <div>
-        <p className="section-label">المفتاح الذكي</p>
-        <h1 className="page-title">Dead Man's Switch</h1>
-        <p className="text-[#7A6A52] text-sm mt-1">نظام الكشف التلقائي عن الغياب</p>
+        <p className="section-label text-xs md:text-sm">المفتاح الذكي</p>
+        <h1 className="page-title text-2xl md:text-3xl">Dead Man's Switch</h1>
+        <p className="text-[#7A6A52] text-xs md:text-sm mt-1">نظام الكشف التلقائي عن الغياب</p>
       </div>
 
       {/* Status card */}
-      <div className={`border rounded-xl p-5 flex items-start gap-4 ${statusMeta.color}`}>
-        <StatusIcon size={22} className="mt-0.5 flex-shrink-0" />
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold">الحالة: {statusMeta.label}</span>
+      <div className={`border rounded-lg md:rounded-xl p-4 md:p-5 flex flex-col sm:flex-row items-start gap-3 md:gap-4 ${statusMeta.color}`}>
+        <StatusIcon size={18} className="mt-0.5 flex-shrink-0 md:w-[22px] md:h-[22px] md:w-[22px]" />
+        <div className="flex-1">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+            <span className="font-semibold text-sm md:text-base">الحالة: {statusMeta.label}</span>
           </div>
-          <p className="text-sm">{statusMeta.desc}</p>
+          <p className="text-xs md:text-sm">{statusMeta.desc}</p>
           {data?.switchLastCheckin && (
             <p className="text-xs mt-2 opacity-70">
               آخر تسجيل دخول: منذ {daysSince} يوم
@@ -125,40 +125,40 @@ export default function SwitchPage() {
       </div>
 
       {/* Check-in button */}
-      <div className="card text-center space-y-4">
-        <div className="w-16 h-16 bg-[#FAF3E0] rounded-full flex items-center justify-center mx-auto">
-          <CheckCircle size={28} className="text-[#B8860B]" />
+      <div className="card text-center space-y-4 p-4 md:p-6">
+        <div className="w-14 h-14 md:w-16 md:h-16 bg-[#FAF3E0] rounded-full flex items-center justify-center mx-auto">
+          <CheckCircle size={24} className="text-[#B8860B] md:w-[28px] md:h-[28px]" />
         </div>
         <div>
-          <h3 className="font-semibold text-[#1A1208] text-lg">أنا بخير ✓</h3>
-          <p className="text-[#7A6A52] text-sm mt-1">اضغط لتأكيد حضورك وإعادة ضبط الساعة</p>
+          <h3 className="font-semibold text-[#1A1208] text-base md:text-lg">أنا بخير ✓</h3>
+          <p className="text-[#7A6A52] text-xs md:text-sm mt-1">اضغط لتأكيد حضورك وإعادة ضبط الساعة</p>
         </div>
         <button
           onClick={handleCheckin}
           disabled={checkingIn}
-          className="btn-primary w-full flex items-center justify-center gap-2"
+          className="btn-primary w-full flex items-center justify-center gap-2 py-3 md:py-4 text-xs md:text-sm"
         >
           {checkingIn
             ? <div className="w-4 h-4 border-2 border-[#D4A017] border-t-transparent rounded-full animate-spin" />
-            : <CheckCircle size={16} />}
+            : <CheckCircle size={14} />}
           {checkingIn ? 'جارٍ التأكيد...' : 'تأكيد الحضور'}
         </button>
       </div>
 
       {/* Settings */}
-      <div className="card space-y-5">
-        <h2 className="font-semibold text-[#1A1208]">إعدادات المفتاح</h2>
+      <div className="card space-y-5 p-4 md:p-6">
+        <h2 className="font-semibold text-[#1A1208] text-base md:text-lg">إعدادات المفتاح</h2>
 
         {/* Enable/Disable */}
-        <div className="flex items-center justify-between p-4 bg-[#FDF8F0] rounded-xl border border-[rgba(184,134,11,0.15)]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3 md:p-4 bg-[#FDF8F0] rounded-lg md:rounded-xl border border-[rgba(184,134,11,0.15)]">
           <div>
-            <p className="text-[#1A1208] text-sm font-medium">تفعيل المفتاح</p>
+            <p className="text-[#1A1208] text-xs md:text-sm font-medium">تفعيل المفتاح</p>
             <p className="text-[#7A6A52] text-xs mt-0.5">تفعيل نظام الكشف عن الغياب</p>
           </div>
           <button
             onClick={handleToggle}
             disabled={saving}
-            className={`relative w-12 h-6 rounded-full transition-colors duration-200 ${
+            className={`relative flex-shrink-0 w-12 h-6 rounded-full transition-colors duration-200 ${
               data?.switchEnabled ? 'bg-[#D4A017]' : 'bg-gray-300'
             }`}
           >
@@ -170,9 +170,9 @@ export default function SwitchPage() {
 
         {/* Interval slider */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-[#1A1208] text-sm font-medium">فترة الانتظار قبل التفعيل</label>
-            <span className="text-[#D4A017] font-bold text-lg">{interval} يوم</span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <label className="text-[#1A1208] text-xs md:text-sm font-medium">فترة الانتظار قبل التفعيل</label>
+            <span className="text-[#D4A017] font-bold text-base md:text-lg">{interval} يوم</span>
           </div>
           <input
             type="range"
@@ -190,16 +190,16 @@ export default function SwitchPage() {
           </div>
         </div>
 
-        <button onClick={handleSaveInterval} disabled={saving} className="btn-primary w-full">
+        <button onClick={handleSaveInterval} disabled={saving} className="btn-primary w-full py-3 md:py-4 text-xs md:text-sm">
           {saving ? 'جارٍ الحفظ...' : 'حفظ الإعدادات'}
         </button>
       </div>
 
       {/* How it works */}
-      <div className="card space-y-3">
+      <div className="card space-y-3 p-4 md:p-6">
         <div className="flex items-center gap-2 mb-1">
-          <Info size={16} className="text-[#B8860B]" />
-          <h3 className="font-semibold text-[#1A1208] text-sm">كيف يعمل المفتاح؟</h3>
+          <Info size={14} className="text-[#B8860B] flex-shrink-0 md:w-[16px] md:h-[16px]" />
+          <h3 className="font-semibold text-[#1A1208] text-xs md:text-sm">كيف يعمل المفتاح؟</h3>
         </div>
         {[
           ['يوم 0', 'تسجّل دخولك — الساعة تُعاد للصفر'],
@@ -208,9 +208,9 @@ export default function SwitchPage() {
           [`يوم ${interval + 7}`, 'يُبلَّغ الشاهد الموثوق لتأكيد الوضع'],
           [`يوم ${interval + 10}+`, 'تُرسَل رسائلك لأحبائك'],
         ].map(([day, action]) => (
-          <div key={day} className="flex items-start gap-3">
-            <span className="text-[#D4A017] text-xs font-mono mt-0.5 min-w-[70px]">{day}</span>
-            <span className="text-[#7A6A52] text-sm">{action}</span>
+          <div key={day} className="flex items-start gap-2 md:gap-3">
+            <span className="text-[#D4A017] text-xs font-mono mt-0.5 flex-shrink-0">{day}</span>
+            <span className="text-[#7A6A52] text-xs md:text-sm">{action}</span>
           </div>
         ))}
       </div>

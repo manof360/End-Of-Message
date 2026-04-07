@@ -27,14 +27,14 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-[#1A1208] text-[#D4A017] px-6 py-3 rounded-full font-medium
+    @apply bg-[#1A1208] text-[#D4A017] px-4 md:px-6 py-2 md:py-3 rounded-full font-medium
            hover:bg-[#D4A017] hover:text-[#1A1208] transition-all duration-200
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm;
   }
 
   .btn-secondary {
     @apply bg-transparent text-[#3D2F1A] border border-[rgba(184,134,11,0.4)]
-           px-6 py-3 rounded-full font-medium
+           px-4 md:px-6 py-2 md:py-3 rounded-full font-medium text-xs md:text-sm
            hover:border-[#D4A017] hover:text-[#B8860B] transition-all duration-200;
   }
 
@@ -44,23 +44,23 @@
   }
 
   .card {
-    @apply bg-[#F5EDD8] border border-[rgba(184,134,11,0.2)] rounded-xl p-6;
+    @apply bg-[#F5EDD8] border border-[rgba(184,134,11,0.2)] rounded-lg md:rounded-xl p-4 md:p-6;
   }
 
   .card-elevated {
-    @apply bg-[#FDF8F0] border border-[rgba(184,134,11,0.3)] rounded-xl p-6
+    @apply bg-[#FDF8F0] border border-[rgba(184,134,11,0.3)] rounded-lg md:rounded-xl p-4 md:p-6
            hover:border-[#D4A017] transition-all duration-200;
   }
 
   .input {
     @apply w-full bg-[#FDF8F0] border border-[rgba(184,134,11,0.3)] rounded-lg
-           px-4 py-3 text-[#1A1208] placeholder-[#7A6A52]
+           px-3 md:px-4 py-2 md:py-3 text-sm md:text-base text-[#1A1208] placeholder-[#7A6A52]
            focus:outline-none focus:border-[#D4A017] focus:ring-1 focus:ring-[#D4A017]
            transition-all duration-200;
   }
 
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2 md:px-3 py-1 rounded-full text-xs font-medium;
   }
 
   .badge-gold {
@@ -84,11 +84,11 @@
   }
 
   .stat-card {
-    @apply bg-[#1A1208] rounded-xl p-5 text-center;
+    @apply bg-[#1A1208] rounded-lg md:rounded-xl p-3 md:p-5 text-center;
   }
   
   .page-title {
-    @apply text-2xl font-bold text-[#1A1208] mb-1;
+    @apply font-bold text-[#1A1208] mb-1;
   }
 
   .section-label {

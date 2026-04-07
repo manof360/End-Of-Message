@@ -21,27 +21,27 @@ export default function LoginPage() {
   if (status === 'loading') return null
 
   return (
-    <div className="min-h-screen bg-[#1A1208] flex items-center justify-center p-4" dir="rtl">
+    <div className="min-h-screen bg-[#1A1208] flex items-center justify-center px-4 py-8 sm:py-0" dir="rtl">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-[#D4A017] opacity-[0.04] rounded-full blur-[80px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] sm:w-[600px] h-[300px] sm:h-[400px] bg-[#D4A017] opacity-[0.04] rounded-full blur-[80px]" />
       </div>
 
-      <div className="relative w-full max-w-md">
+      <div className="relative w-full max-w-sm">
         {/* Card */}
-        <div className="bg-[#2A1F0E] border border-[rgba(184,134,11,0.25)] rounded-2xl p-10 shadow-2xl">
+        <div className="bg-[#2A1F0E] border border-[rgba(184,134,11,0.25)] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl">
           {/* Logo */}
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold text-[#FDF8F0] mb-2">
+          <div className="text-center mb-6 md:mb-10">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#FDF8F0] mb-2">
               وصي<span className="text-[#D4A017]">تي</span>
             </h1>
-            <p className="text-[rgba(253,248,240,0.45)] text-sm">
+            <p className="text-[rgba(253,248,240,0.45)] text-xs md:text-sm">
               رسائلك تعيش بعدك
             </p>
           </div>
 
           {/* Divider with text */}
-          <div className="relative mb-8">
+          <div className="relative mb-6 md:mb-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-[rgba(184,134,11,0.15)]" />
             </div>
@@ -56,7 +56,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-[#FDF8F0] hover:bg-white text-[#1A1208] font-medium py-4 px-6 rounded-xl transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed group"
+            className="w-full flex items-center justify-center gap-3 bg-[#FDF8F0] hover:bg-white text-[#1A1208] font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg md:rounded-xl transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed group text-sm md:text-base"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-[#1A1208] border-t-transparent rounded-full animate-spin" />
@@ -68,32 +68,32 @@ export default function LoginPage() {
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
             )}
-            <span>{loading ? 'جارٍ تسجيل الدخول...' : 'الدخول عبر Google'}</span>
+            <span className="truncate">{loading ? 'جارٍ تسجيل الدخول...' : 'الدخول عبر Google'}</span>
           </button>
 
           {/* Info */}
-          <div className="mt-6 space-y-2">
+          <div className="mt-4 md:mt-6 space-y-2">
             <div className="flex items-start gap-2 text-[rgba(253,248,240,0.35)] text-xs">
-              <span className="text-[#D4A017] mt-0.5">✓</span>
+              <span className="text-[#D4A017] mt-0.5 flex-shrink-0">✓</span>
               <span>رسائلك تُحفظ تلقائياً في Google Drive الخاص بك</span>
             </div>
             <div className="flex items-start gap-2 text-[rgba(253,248,240,0.35)] text-xs">
-              <span className="text-[#D4A017] mt-0.5">✓</span>
+              <span className="text-[#D4A017] mt-0.5 flex-shrink-0">✓</span>
               <span>تشفير كامل — لا أحد يرى رسائلك قبل وقتها</span>
             </div>
             <div className="flex items-start gap-2 text-[rgba(253,248,240,0.35)] text-xs">
-              <span className="text-[#D4A017] mt-0.5">✓</span>
+              <span className="text-[#D4A017] mt-0.5 flex-shrink-0">✓</span>
               <span>مجاني للبدء، لا يلزم بطاقة ائتمان</span>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[rgba(253,248,240,0.2)] text-xs mt-6">
+        <p className="text-center text-[rgba(253,248,240,0.2)] text-[10px] md:text-xs mt-6 px-2">
           بتسجيلك فإنك توافق على{' '}
-          <a href="/privacy" className="text-[rgba(184,134,11,0.5)] hover:text-[#D4A017]">سياسة الخصوصية</a>
+          <a href="/privacy" className="text-[rgba(184,134,11,0.5)] hover:text-[#D4A017] transition-colors">سياسة الخصوصية</a>
           {' '}و{' '}
-          <a href="/terms" className="text-[rgba(184,134,11,0.5)] hover:text-[#D4A017]">الشروط والأحكام</a>
+          <a href="/terms" className="text-[rgba(184,134,11,0.5)] hover:text-[#D4A017] transition-colors">الشروط والأحكام</a>
         </p>
       </div>
     </div>

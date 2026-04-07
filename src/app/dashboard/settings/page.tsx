@@ -29,23 +29,23 @@ export default async function SettingsPage() {
   })
 
   return (
-    <div className="animate-fade-in max-w-2xl space-y-8" dir="rtl">
+    <div className="animate-fade-in w-full max-w-2xl mx-auto space-y-6 md:space-y-8 px-4 sm:px-6 md:px-0" dir="rtl">
       <div>
-        <p className="section-label">الإعدادات</p>
-        <h1 className="page-title">حسابي</h1>
+        <p className="section-label text-xs md:text-sm">الإعدادات</p>
+        <h1 className="page-title text-2xl md:text-3xl">حسابي</h1>
       </div>
 
       {/* Profile */}
-      <div className="card flex items-center gap-5">
+      <div className="card flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-5 p-4 md:p-6">
         {user?.image && (
           <Image src={user.image} alt="" width={64} height={64}
             className="rounded-full border-2 border-[rgba(184,134,11,0.3)] flex-shrink-0" />
         )}
-        <div>
-          <h2 className="text-[#1A1208] font-semibold text-lg">{user?.name}</h2>
-          <p className="text-[#7A6A52] text-sm" dir="ltr">{user?.email}</p>
-          <div className="flex items-center gap-2 mt-2">
-            <span className="badge badge-gold flex items-center gap-1">
+        <div className="flex-1 text-center sm:text-right">
+          <h2 className="text-[#1A1208] font-semibold text-base md:text-lg">{user?.name}</h2>
+          <p className="text-[#7A6A52] text-xs md:text-sm" dir="ltr">{user?.email}</p>
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 mt-3 justify-center sm:justify-start">
+            <span className="badge badge-gold flex items-center gap-1 text-xs">
               <Crown size={10} />
               {user?.plan === 'FREE' ? 'مجاني' : user?.plan === 'BASIC' ? 'أساسي' : 'بريميوم'}
             </span>
@@ -58,13 +58,13 @@ export default async function SettingsPage() {
 
       {/* Plans */}
       <div>
-        <h2 className="font-semibold text-[#1A1208] mb-4">خطط الاشتراك</h2>
-        <div className="grid grid-cols-3 gap-3">
+        <h2 className="font-semibold text-[#1A1208] mb-4 text-base md:text-lg">خطط الاشتراك</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {plans.map(plan => {
             const isCurrent = user?.plan === plan.key
             return (
               <div key={plan.key}
-                className={`rounded-xl border p-4 relative transition-all ${
+                className={`rounded-lg md:rounded-xl border p-3 md:p-4 relative transition-all ${
                   isCurrent
                     ? 'border-[#D4A017] bg-[#FAF3E0]'
                     : plan.recommended
@@ -72,17 +72,17 @@ export default async function SettingsPage() {
                     : 'border-[rgba(184,134,11,0.2)] bg-[#FDF8F0]'
                 }`}>
                 {plan.recommended && !isCurrent && (
-                  <div className="absolute -top-2.5 right-1/2 translate-x-1/2 bg-[#D4A017] text-[#1A1208] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  <div className="absolute -top-2.5 right-1/2 translate-x-1/2 bg-[#D4A017] text-[#1A1208] text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full">
                     الأشهر
                   </div>
                 )}
                 {isCurrent && (
-                  <div className="absolute -top-2.5 right-1/2 translate-x-1/2 bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  <div className="absolute -top-2.5 right-1/2 translate-x-1/2 bg-green-600 text-white text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full">
                     خطتك الحالية
                   </div>
                 )}
                 <div className="text-xs text-[#7A6A52] mb-1">{plan.name}</div>
-                <div className="text-xl font-bold text-[#1A1208]">
+                <div className="text-lg md:text-xl font-bold text-[#1A1208]">
                   {plan.price}<span className="text-xs font-normal text-[#7A6A52]">{plan.period}</span>
                 </div>
                 <ul className="mt-3 space-y-1">
@@ -94,7 +94,7 @@ export default async function SettingsPage() {
                   ))}
                 </ul>
                 {!isCurrent && (
-                  <button className="mt-4 w-full text-xs py-2 rounded-lg border border-[rgba(184,134,11,0.3)] text-[#B8860B] hover:bg-[#FAF3E0] transition-colors">
+                  <button className="mt-4 w-full text-xs py-2.5 md:py-2 rounded-lg border border-[rgba(184,134,11,0.3)] text-[#B8860B] hover:bg-[#FAF3E0] transition-colors">
                     {plan.key === 'FREE' ? 'الخطة الحالية' : 'الترقية'}
                   </button>
                 )}
@@ -102,16 +102,16 @@ export default async function SettingsPage() {
             )
           })}
         </div>
-        <p className="text-[#7A6A52] text-xs text-center mt-3">
+        <p className="text-[#7A6A52] text-xs text-center mt-4 px-2">
           للترقية، تواصل معنا على support@wasiyati.com · الدفع قريباً عبر Stripe
         </p>
       </div>
 
       {/* Danger zone */}
-      <div className="card border-red-200 bg-red-50 space-y-3">
+      <div className="card border-red-200 bg-red-50 space-y-3 p-4 md:p-6">
         <h3 className="text-red-800 font-semibold text-sm">منطقة الخطر</h3>
         <p className="text-red-600 text-xs">حذف الحساب سيؤدي إلى حذف جميع رسائلك نهائياً ولا يمكن التراجع.</p>
-        <button className="text-red-600 text-sm border border-red-300 px-4 py-2 rounded-lg hover:bg-red-100 transition-colors">
+        <button className="text-red-600 text-xs md:text-sm border border-red-300 px-4 py-2 md:py-3 rounded-lg hover:bg-red-100 transition-colors w-full sm:w-auto">
           حذف الحساب نهائياً
         </button>
       </div>
