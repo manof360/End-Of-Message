@@ -92,9 +92,31 @@ Make sure to set environment variables in Vercel dashboard:
 
 ## Documentation
 
+### Google Drive & Cloud Storage
 - [Google Drive Setup Guide](GOOGLE_DRIVE_SETUP.md) — Complete guide for setting up Google Drive
 - [Google Drive Troubleshooting](GOOGLE_DRIVE_TROUBLESHOOTING.md) — Solutions for common issues
 - [Google Drive Errors Reference](GOOGLE_DRIVE_ERRORS.md) — Detailed error messages and solutions
+
+### Message Delivery System
+- [Message System Guide](MESSAGE_SYSTEM.md) — Complete guide to message creation and delivery
+  - Supports EMAIL (active), SMS & WhatsApp (ready for integration)
+  - Multi-channel delivery with status tracking
+  - Integration with Google Drive backup
+  
+- [Scheduling System Guide](SCHEDULING_SYSTEM.md) — Time-based message scheduling
+  - Support for all trigger types (SWITCH, DATE, KEYHOLDER)
+  - Daily cron processing at 8 AM UTC
+  - Testing with `/dashboard/test` interface
+
+### Testing & Status
+- [Testing Guide](TESTING_GUIDE.md) — Quick testing guide with step-by-step scenarios
+- [System Status](SYSTEM_STATUS.md) — Current system state and recent improvements
+- [Completion Summary](COMPLETION_SUMMARY.md) — Final summary of all improvements and next steps
+
+### Quick References
+- [Quick Fix Guide](QUICK_FIX.md) — 5-minute setup solution
+- [Solution Summary](SOLUTION_SUMMARY.md) — Overview of all improvements
+- [Improvements Summary](IMPROVEMENTS_SUMMARY.md) — Technical details of recent fixes
 
 
 ## Deploy
