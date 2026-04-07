@@ -6,22 +6,21 @@ import { prisma } from './prisma'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
-  
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          // Request Drive access to store messages
           scope: [
             'openid',
             'email',
             'profile',
-            'https://www.googleapis.com/auth/drive.file', // Create/read files created by app
+            'https://www.googleapis.com/auth/drive.file',
           ].join(' '),
-          access_type: 'offline',  // Get refresh token
-          prompt: 'consent',       // Always show consent to get refresh_token
+          access_type: 'offline',
+          prompt: 'consent',  // Always show consent to get refresh_token + Drive permission
         },
       },
     }),
@@ -31,35 +30,28 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id
-        session.user.role = (user as any).role
-        session.user.plan = (user as any).plan
+        session.user.role = (user as any).role ?? 'USER'
+        session.user.plan = (user as any).plan ?? 'FREE'
       }
       return session
     },
 
-    async signIn({ user, account }) {
-      // Update last login time
-      if (user.email) {
+    async signIn({ user }) {
+      if (user?.id) {
+        // Reset dead man's switch on every login
         await prisma.user.update({
-          where: { email: user.email },
-          data: { 
-            lastLoginAt: new Date(),
-            switchLastCheckin: new Date(), // Reset dead man's switch on login
-          },
-        }).catch(() => {}) // Ignore if user doesn't exist yet (first sign in)
-      }
-
-      // Log the check-in
-      if (user.id) {
-        await prisma.switchLog.create({
+          where: { id: user.id },
           data: {
-            userId: user.id,
-            event: 'CHECKIN',
-            details: 'Signed in via Google',
+            lastLoginAt: new Date(),
+            switchLastCheckin: new Date(),
+            switchStatus: 'ACTIVE',
           },
         }).catch(() => {})
-      }
 
+        await prisma.switchLog.create({
+          data: { userId: user.id, event: 'CHECKIN', details: 'Signed in via Google' },
+        }).catch(() => {})
+      }
       return true
     },
   },
@@ -71,18 +63,10 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: 'database',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-
-  events: {
-    async createUser({ user }) {
-      // New user registered - create their Google Drive folder
-      console.log(`New user registered: ${user.email}`)
-    },
+    maxAge: 30 * 24 * 60 * 60,
   },
 }
 
-// Extend next-auth types
 declare module 'next-auth' {
   interface Session {
     user: {
