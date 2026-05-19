@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /_next/
+Disallow: /static/
+
+# Google Search Console
+Allow: /
+
+# Sitemap
+Sitemap: https://wasiyati.app/sitemap.xml
+
+# Crawl delay (optional, most bots ignore this)
+Crawl-delay: 1

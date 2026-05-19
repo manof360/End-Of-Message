@@ -1,0 +1,83 @@
+{
+  "name": "Wasiyati - وصيتي",
+  "short_name": "Wasiyati",
+  "description": "احفظ رسائلك الأخيرة، وصاياك، وأسرارك — تُرسَل تلقائياً إلى أحبائك في الوقت المناسب.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FDF8F0",
+  "theme_color": "#1A1208",
+  "dir": "rtl",
+  "lang": "ar",
+  "categories": ["productivity", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "540x720",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-2.png",
+      "sizes": "1280x720",
+      "form_factor": "wide"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "اكتب رسالة",
+      "short_name": "رسالة جديدة",
+      "description": "ابدأ كتابة رسالة جديدة",
+      "url": "/dashboard/messages/new",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "رسائلي",
+      "short_name": "الرسائل",
+      "description": "عرض جميع رسائلي",
+      "url": "/dashboard/messages",
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
