@@ -17,7 +17,10 @@ export async function GET(req: NextRequest) {
         include: {
           messages: {
             where: { status: 'ACTIVE', triggerType: { in: ['SWITCH', 'KEYHOLDER'] } },
-            include: { recipients: true },
+            include: {
+              recipients: true,
+              user: { select: { id: true, name: true, email: true } },
+            },
           },
         },
       },

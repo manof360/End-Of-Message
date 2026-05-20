@@ -171,8 +171,7 @@ export async function getOrCreateWasiyatiFolder(userId: string): Promise<string>
           description: 'رسائلي ووصاياي المحفوظة عبر تطبيق وصيتي | Messages saved by Wasiyati app',
         },
         fields: 'id',
-        spaces: 'drive',
-      })
+      } as any)
       folderId = folderRes.data.id!
       console.log('[Drive] Created new folder:', folderId)
     }

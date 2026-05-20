@@ -7,14 +7,17 @@ import { sendEmail } from './email'
 type UserWithMessages = Prisma.UserGetPayload<{
   include: {
     messages: {
-      include: { recipients: true }
+      include: {
+        recipients: true
+        user: { select: { email: true; name: true; id: true } }
+      }
     }
   }
 }>
 
 // Type for message with recipients
 type MessageWithRecipients = Prisma.MessageGetPayload<{
-  include: { recipients: true }
+  include: { recipients: true; user: { select: { email: true; name: true; id: true } } }
 }>
 
 /**
@@ -32,7 +35,10 @@ export async function processSwitches() {
     include: {
       messages: {
         where: { status: 'ACTIVE', triggerType: 'SWITCH' },
-        include: { recipients: true },
+        include: {
+          recipients: true,
+          user: { select: { id: true, name: true, email: true } },
+        },
       },
     },
   })

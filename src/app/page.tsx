@@ -39,7 +39,6 @@ export const metadata: Metadata = {
       follow: true,
     },
   },
-  canonical: 'https://wasiyati.app',
 }
 
 export default async function Home() {

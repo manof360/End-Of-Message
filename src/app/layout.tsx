@@ -1,5 +1,5 @@
 // src/app/layout.tsx
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Tajawal } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/layout/Providers'
@@ -9,6 +9,13 @@ const tajawal = Tajawal({
   weight: ['300', '400', '500', '700'],
   variable: '--font-tajawal',
 })
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+}
 
 export const metadata: Metadata = {
   title: 'Wasiyati — رسائلك تعيش بعدك',
@@ -29,12 +36,6 @@ export const metadata: Metadata = {
     email: false,
     address: false,
     telephone: false,
-  },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
   },
   robots: {
     index: true,
