@@ -3,6 +3,7 @@
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
@@ -18,25 +19,26 @@ export default function LoginPage() {
     await signIn('google', { callbackUrl: '/dashboard' })
   }
 
-  if (status === 'loading') return null
+  if (status === 'loading') return <main className="public-login min-h-screen bg-[#1A1208] text-[#FDF8F0] flex flex-col gap-4 items-center justify-center" dir="rtl"><h1>تسجيل الدخول إلى حسابك</h1><p role="status">جارٍ التحقق من الجلسة…</p></main>
 
   return (
-    <div className="min-h-screen bg-[#1A1208] flex items-center justify-center px-4 py-8 sm:py-0" dir="rtl">
+    <main className="public-login min-h-screen bg-[#1A1208] flex items-center justify-center px-4 py-8" dir="rtl">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] sm:w-[600px] h-[300px] sm:h-[400px] bg-[#D4A017] opacity-[0.04] rounded-full blur-[80px]" />
       </div>
 
       <div className="relative w-full max-w-sm">
+        <Link href="/" className="inline-block text-[#e2ba71] text-sm mb-5 py-2">العودة إلى وصيتي</Link>
         {/* Card */}
         <div className="bg-[#2A1F0E] border border-[rgba(184,134,11,0.25)] rounded-xl md:rounded-2xl p-6 md:p-10 shadow-2xl">
           {/* Logo */}
           <div className="text-center mb-6 md:mb-10">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#FDF8F0] mb-2">
+            <p className="text-3xl md:text-4xl font-bold text-[#FDF8F0] mb-2">
               وصي<span className="text-[#D4A017]">تي</span>
-            </h1>
-            <p className="text-[rgba(253,248,240,0.45)] text-xs md:text-sm">
-              رسائلك تعيش بعدك
+            </p>
+            <p className="text-[#c2b4a0] text-xs md:text-sm">
+              اكتب لأحبائك، وحدد شرط إرسال رسالتك
             </p>
           </div>
 
@@ -46,9 +48,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-[rgba(184,134,11,0.15)]" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-[#2A1F0E] px-4 text-[rgba(253,248,240,0.35)] text-xs">
-                ادخل إلى حسابك
-              </span>
+              <h1 className="bg-[#2A1F0E] px-4 text-[#c2b4a0] text-sm">تسجيل الدخول إلى حسابك</h1>
             </div>
           </div>
 
@@ -56,12 +56,13 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleSignIn}
             disabled={loading}
+            aria-busy={loading}
             className="w-full flex items-center justify-center gap-3 bg-[#FDF8F0] hover:bg-white text-[#1A1208] font-medium py-3 md:py-4 px-4 md:px-6 rounded-lg md:rounded-xl transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed group text-sm md:text-base"
           >
             {loading ? (
-              <div className="w-5 h-5 border-2 border-[#1A1208] border-t-transparent rounded-full animate-spin" />
+              <div aria-hidden="true" className="w-5 h-5 border-2 border-[#1A1208] border-t-transparent rounded-full animate-spin" />
             ) : (
-              <svg viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0">
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="w-5 h-5 flex-shrink-0">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -73,29 +74,29 @@ export default function LoginPage() {
 
           {/* Info */}
           <div className="mt-4 md:mt-6 space-y-2">
-            <div className="flex items-start gap-2 text-[rgba(253,248,240,0.35)] text-xs">
+            <div className="flex items-start gap-2 text-[#c2b4a0] text-xs">
               <span className="text-[#D4A017] mt-0.5 flex-shrink-0">✓</span>
-              <span>رسائلك تُحفظ تلقائياً في Google Drive الخاص بك</span>
+              <span>تُحاول مزامنة نسخة إلى Google Drive عند توفر الاتصال والصلاحيات</span>
             </div>
-            <div className="flex items-start gap-2 text-[rgba(253,248,240,0.35)] text-xs">
+            <div className="flex items-start gap-2 text-[#c2b4a0] text-xs">
               <span className="text-[#D4A017] mt-0.5 flex-shrink-0">✓</span>
-              <span>تشفير كامل — لا أحد يرى رسائلك قبل وقتها</span>
+              <span>الخادم يخزن محتوى الرسائل ويعالجه للإرسال؛ لا يتوفر تشفير طرفي</span>
             </div>
-            <div className="flex items-start gap-2 text-[rgba(253,248,240,0.35)] text-xs">
+            <div className="flex items-start gap-2 text-[#c2b4a0] text-xs">
               <span className="text-[#D4A017] mt-0.5 flex-shrink-0">✓</span>
-              <span>مجاني للبدء، لا يلزم بطاقة ائتمان</span>
+              <span>الخطة المجانية تتيح رسالة واحدة وشاهداً واحداً</span>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[rgba(253,248,240,0.2)] text-[10px] md:text-xs mt-6 px-2">
-          بتسجيلك فإنك توافق على{' '}
-          <a href="/privacy" className="text-[rgba(184,134,11,0.5)] hover:text-[#D4A017] transition-colors">سياسة الخصوصية</a>
+        <p className="text-center text-[#c2b4a0] text-xs mt-6 px-2">
+          قبل الدخول، راجع{' '}
+          <a href="/privacy" className="text-[#e2ba71] hover:underline">معلومات الخصوصية</a>
           {' '}و{' '}
-          <a href="/terms" className="text-[rgba(184,134,11,0.5)] hover:text-[#D4A017] transition-colors">الشروط والأحكام</a>
+          <a href="/terms" className="text-[#e2ba71] hover:underline">مسودة الشروط غير المعتمدة</a>
         </p>
       </div>
-    </div>
+    </main>
   )
 }

@@ -1,0 +1,74 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "sourceCommit": "4747f20f186e25f24cf978084a2308792ee3c1ae",
+  "results": [
+    {
+      "check": "HTML/metadata /",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /about",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /features",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /faq",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /privacy",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /security",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /contact",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /terms",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /login",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /error",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /keyholder/confirmed",
+      "status": "pass"
+    },
+    {
+      "check": "HTML/metadata /keyholder/already-confirmed",
+      "status": "pass"
+    },
+    {
+      "check": "Server-rendered home, visible FAQ and factual schema",
+      "status": "pass"
+    },
+    {
+      "check": "Sitemap public allowlist, robots and crawlable login noindex",
+      "status": "pass"
+    },
+    {
+      "check": "10 internal links and 9 protected redirects",
+      "status": "pass"
+    },
+    {
+      "check": "Real 404, working PNG share image, SVG icon and manifest",
+      "status": "pass"
+    },
+    {
+      "check": "Protected source/config byte equality, original home redirect and Google handler",
+      "status": "pass"
+    }
+  ]
+}
