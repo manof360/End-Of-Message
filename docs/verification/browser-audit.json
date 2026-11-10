@@ -1,0 +1,115 @@
+{
+  "desktop": [
+    {
+      "h1": [
+        "ما يمكنك فعله في وصيتي"
+      ],
+      "main": 1,
+      "path": "/features",
+      "scrollWidth": 1274,
+      "width": 1280
+    },
+    {
+      "h1": [
+        "كل ما تحتاج معرفته قبل رسالتك"
+      ],
+      "main": 1,
+      "path": "/faq",
+      "scrollWidth": 1274,
+      "width": 1280
+    },
+    {
+      "h1": [
+        "كيف تُستخدم بياناتك؟"
+      ],
+      "main": 1,
+      "path": "/privacy",
+      "scrollWidth": 1274,
+      "width": 1280
+    },
+    {
+      "h1": [
+        "شروط الاستخدام — مسودة للمراجعة"
+      ],
+      "main": 1,
+      "path": "/terms",
+      "scrollWidth": 1274,
+      "width": 1280
+    },
+    {
+      "h1": [
+        "معلومات واضحة، وتوقعات واقعية"
+      ],
+      "main": 1,
+      "path": "/security",
+      "scrollWidth": 1274,
+      "width": 1280
+    },
+    {
+      "h1": [
+        "قنوات التواصل"
+      ],
+      "main": 1,
+      "path": "/contact",
+      "scrollWidth": 1274,
+      "width": 1280
+    },
+    {
+      "h1": [
+        "تسجيل الدخول إلى حسابك"
+      ],
+      "main": 1,
+      "path": "/login",
+      "scrollWidth": 1280,
+      "width": 1280
+    }
+  ],
+  "mobile320": [
+    {
+      "h1Count": 1,
+      "path": "/",
+      "scrollWidth": 314,
+      "width": 320
+    },
+    {
+      "h1Count": 1,
+      "path": "/features",
+      "scrollWidth": 314,
+      "width": 320
+    },
+    {
+      "h1Count": 1,
+      "path": "/contact",
+      "scrollWidth": 314,
+      "width": 320
+    },
+    {
+      "h1Count": 1,
+      "path": "/login",
+      "scrollWidth": 320,
+      "width": 320
+    }
+  ],
+  "home390": {
+    "width": 390,
+    "overflow": false,
+    "menu": true,
+    "themeToggle": true,
+    "faqKeyboard": true,
+    "skipLinkKeyboard": true
+  },
+  "contrast": [
+    {
+      "checked": 89,
+      "failures": [],
+      "mode": "light"
+    },
+    {
+      "checked": 89,
+      "failures": [],
+      "mode": "dark"
+    }
+  ],
+  "consoleErrors": [],
+  "limits": "Development server; no authenticated session, OAuth, database writes or live email/Drive tests."
+}

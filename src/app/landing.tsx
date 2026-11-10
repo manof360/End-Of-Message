@@ -1,389 +1,62 @@
-import { signIn } from 'next-auth/react'
 import Link from 'next/link'
-import { Heart, Lock, Clock, Users, CheckCircle, Shield, MessageCircle, Zap } from 'lucide-react'
+import { ArrowUpLeft, CalendarDays, Heart, Mail, PenLine, Users } from 'lucide-react'
+import { PublicShell } from '@/components/public/PublicShell'
+import { FaqList } from '@/components/public/FaqList'
+import { features, steps } from '@/components/public/content'
+import { SITE_URL, SITE_DESCRIPTION } from '@/lib/site'
+import type { ReactElement } from 'react'
 
-export function LandingPage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDF8F0] to-[#FAF5ED]">
-      {/* Navigation */}
-      <nav
-        className="sticky top-0 z-50 border-b border-amber-200 bg-[#FDF8F0]/95 backdrop-blur-sm"
-        role="navigation"
-        aria-label="Main navigation"
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-2">
-              <Heart className="w-6 h-6 text-red-600 fill-red-600" aria-hidden="true" />
-              <span className="text-xl font-bold text-amber-900">Wasiyati</span>
-              <span className="text-xs text-amber-600">وصيتي</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-amber-900 hover:text-amber-600 transition">
-                المميزات
-              </a>
-              <a href="#how-it-works" className="text-amber-900 hover:text-amber-600 transition">
-                كيف يعمل
-              </a>
-              <a href="#faq" className="text-amber-900 hover:text-amber-600 transition">
-                الأسئلة الشائعة
-              </a>
-              <a href="#security" className="text-amber-900 hover:text-amber-600 transition">
-                الأمان
-              </a>
-              <Link
-                href="/login"
-                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-              >
-                دخول
-              </Link>
-            </div>
-          </div>
+export function LandingPage(): ReactElement {
+  const schema = {
+    '@context': 'https://schema.org', '@type': 'WebApplication', name: 'وصيتي | Wasiyati',
+    url: SITE_URL, description: SITE_DESCRIPTION, inLanguage: 'ar',
+    applicationCategory: 'LifestyleApplication', operatingSystem: 'Web browser',
+    featureList: ['رسائل نصية', 'مستلمون متعددون', 'جدولة بتاريخ', 'مفتاح الغياب', 'شاهد موثوق', 'نسخة Google Drive عند توفر الاتصال'],
+  }
+  return <PublicShell>
+    <main id="main-content" tabIndex={-1}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }} />
+      <section className="public-container public-hero" aria-labelledby="hero-title">
+        <div className="public-hero-copy">
+          <p className="public-eyebrow"><span /> مساحة لكلمات تستحق أن تصل</p>
+          <h1 id="hero-title">اكتب لأحبائك اليوم.<br /><span>وحدد متى تصل رسالتك.</span></h1>
+          <p className="public-lead">وصيتي يحفظ رسائلك النصية ويتيح إعداد إرسالها بالبريد الإلكتروني: بتاريخ تختاره، أو بعد غيابك وفق إعداداتك، أو عند تأكيد شاهد موثوق.</p>
+          <p className="public-audience">لكل من يريد ترك كلمات شخصية أو تعليمات لمن يهمه أمرهم.</p>
+          <div className="public-hero-actions"><Link className="public-button" href="/login">ابدأ رسالتك عبر Google <ArrowUpLeft size={20} aria-hidden="true" /></Link><a className="public-button public-button-outline" href="#how-it-works">كيف يعمل وصيتي؟</a></div>
+          <p className="public-caption">خطة مجانية: رسالة واحدة وشاهد واحد. البريد الإلكتروني هو قناة الإرسال الحالية.</p>
         </div>
-      </nav>
-
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <div className="space-y-6">
-          <h1 className="text-5xl sm:text-6xl font-bold text-amber-900">
-            رسائلك تعيش <span className="text-red-600">بعدك</span>
-          </h1>
-          <p className="text-xl text-amber-700 max-w-2xl mx-auto">
-            احفظ رسائلك الأخيرة، وصاياك، وأسرارك — تُرسَل تلقائياً إلى أحبائك في الوقت المناسب.
-            منصة آمنة وموثوقة لإرث رقمي حقيقي.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-            <Link
-              href="/login?signup=true"
-              className="px-8 py-4 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition text-lg"
-            >
-              ابدأ الآن مجاناً
-            </Link>
-            <a
-              href="#how-it-works"
-              className="px-8 py-4 border-2 border-amber-600 text-amber-900 rounded-lg font-semibold hover:bg-amber-50 transition text-lg"
-            >
-              تعرف على الآلية
-            </a>
+        <figure className="public-message-scene" aria-labelledby="preview-caption">
+          <div className="public-scene-top"><span><PenLine size={16} aria-hidden="true" /> من فكرة إلى رسالة</span><span>01 / 03</span></div>
+          <div className="public-letter">
+            <span className="public-letter-label"><Mail size={17} aria-hidden="true" /> رسالة لمن تحب</span>
+            <p className="public-letter-title">هناك كلمات،<br />تبقى قريبة دائماً.</p>
+            <p>اكتب ما تود أن يتذكّره أحباؤك،<br />واختر من تصله كلماتك ومتى.</p>
+            <div className="public-letter-lines" aria-hidden="true"><i /><i /><i /></div>
+            <div className="public-letter-signature"><span>بكل محبة</span><Heart size={24} aria-hidden="true" /></div>
           </div>
-        </div>
+          <div className="public-scene-bottom"><span><Users size={17} aria-hidden="true" /> اختر المستلمين</span><span><CalendarDays size={17} aria-hidden="true" /> حدد شرط الإرسال</span></div>
+          <figcaption id="preview-caption">تصور توضيحي لرحلة الرسالة، وليس رسالة محفوظة أو تأكيد إرسال.</figcaption>
+        </figure>
       </section>
-
-      {/* Features Section */}
-      <section id="features" className="bg-white py-20 border-t border-b border-amber-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center text-amber-900 mb-16">المميزات الرئيسية</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="space-y-4 text-center">
-              <Shield className="w-12 h-12 text-red-600 mx-auto" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-amber-900">التشفير الكامل</h3>
-              <p className="text-amber-700">
-                رسائلك محمية بأعلى معايير التشفير. حتى نحن لا نستطيع قراءتها.
-              </p>
-            </div>
-            <div className="space-y-4 text-center">
-              <Clock className="w-12 h-12 text-red-600 mx-auto" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-amber-900">إرسال ذكي</h3>
-              <p className="text-amber-700">
-                حدد متى تُرسَل الرسائل. نحن نرقب — إذا توقفتَ عن الدخول ستُرسَل الرسائل.
-              </p>
-            </div>
-            <div className="space-y-4 text-center">
-              <Users className="w-12 h-12 text-red-600 mx-auto" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-amber-900">مستقبلون متعددون</h3>
-              <p className="text-amber-700">
-                أرسل رسائل مختلفة إلى أشخاص مختلفين حسب رغبتك.
-              </p>
-            </div>
-            <div className="space-y-4 text-center">
-              <Zap className="w-12 h-12 text-red-600 mx-auto" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-amber-900">موثوقية عالية</h3>
-              <p className="text-amber-700">
-                إعادة محاولة تلقائية وتتبع دقيق لكل رسالة.
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="public-facts-strip"><div className="public-container"><span>كلماتك، بطريقتك</span><span>رسائل نصية</span><span>حتى 10 مستلمين للرسالة</span><span>3 خيارات لتفعيل الإرسال</span></div></div>
+      <section className="public-container public-section" id="how-it-works" aria-labelledby="how-title">
+        <div className="public-section-heading"><div><p className="public-eyebrow">خطوات بسيطة</p><h2 id="how-title">كيف يعمل؟</h2></div><p>من أول كلمة إلى إعداد الإرسال.<br />كل شيء يبدأ من لوحة التحكم.</p></div>
+        <ol className="public-steps">{steps.map((step, i) => <li key={step.title}><span className="public-step-number">0{i + 1}</span><h3>{step.title}</h3><p>{step.description}</p></li>)}</ol>
       </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center text-amber-900 mb-16">كيف يعمل</h2>
-          <div className="space-y-12">
-            <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="md:w-1/2 text-center">
-                <div
-                  className="w-16 h-16 bg-red-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto"
-                  aria-label="Step 1"
-                >
-                  1
-                </div>
-              </div>
-              <div className="md:w-1/2 space-y-2">
-                <h3 className="text-2xl font-bold text-amber-900">سجّل حسابك</h3>
-                <p className="text-amber-700 text-lg">
-                  إنشاء حسابك بسيط وآمن. استخدم بريدك الإلكتروني أو حسابك على Google.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row-reverse items-center gap-8">
-              <div className="md:w-1/2 text-center">
-                <div
-                  className="w-16 h-16 bg-red-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto"
-                  aria-label="Step 2"
-                >
-                  2
-                </div>
-              </div>
-              <div className="md:w-1/2 space-y-2">
-                <h3 className="text-2xl font-bold text-amber-900">اكتب رسائلك</h3>
-                <p className="text-amber-700 text-lg">
-                  اكتب رسالتك أو وصيتك. أضف أشخاص تريد أن يستقبلوا الرسالة.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row items-center gap-8">
-              <div className="md:w-1/2 text-center">
-                <div
-                  className="w-16 h-16 bg-red-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto"
-                  aria-label="Step 3"
-                >
-                  3
-                </div>
-              </div>
-              <div className="md:w-1/2 space-y-2">
-                <h3 className="text-2xl font-bold text-amber-900">حدد شروط الإرسال</h3>
-                <p className="text-amber-700 text-lg">
-                  حدد عدد الأيام بدون تسجيل دخول قبل الإرسال التلقائي.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row-reverse items-center gap-8">
-              <div className="md:w-1/2 text-center">
-                <div
-                  className="w-16 h-16 bg-red-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto"
-                  aria-label="Step 4"
-                >
-                  4
-                </div>
-              </div>
-              <div className="md:w-1/2 space-y-2">
-                <h3 className="text-2xl font-bold text-amber-900">استرخِ وعش حياتك</h3>
-                <p className="text-amber-700 text-lg">
-                  كل ما عليك هو تسجيل الدخول بانتظام. نحن نرقب الباقي.
-                </p>
-              </div>
-            </div>
-          </div>
+      <section className="public-section public-section-tinted" id="features" aria-labelledby="features-title"><div className="public-container">
+        <div className="public-section-heading"><div><p className="public-eyebrow">ما يمكنك فعله</p><h2 id="features-title">رسالتك، وإعداداتها بين يديك</h2></div><Link className="public-text-link" href="/features">استكشف المميزات <ArrowUpLeft size={18} aria-hidden="true" /></Link></div>
+        <div className="public-feature-grid">{features.map(({ icon: Icon, title, description }) => <article className="public-feature" key={title}><span className="public-feature-icon"><Icon size={23} aria-hidden="true" /></span><h3>{title}</h3><p>{description}</p></article>)}</div>
+      </div></section>
+      <section className="public-container public-section" aria-labelledby="uses-title"><div className="public-section-heading"><div><p className="public-eyebrow">لكلماتك أكثر من مناسبة</p><h2 id="uses-title">متى تستخدم وصيتي؟</h2></div></div>
+        <div className="public-use-grid">
+          <article><span>01 / كلمات من القلب</span><h3>رسالة لأحبائك</h3><p>كلمات امتنان أو قصة شخصية تريد أن تتركها لأفراد أسرتك أو لأصدقائك.</p></article>
+          <article><span>02 / لحظة قادمة</span><h3>رسالة لمناسبة مستقبلية</h3><p>اكتب رسالة اليوم وحدد تاريخاً تصبح فيه مستحقة للمعالجة والإرسال.</p></article>
+          <article><span>03 / تفاصيل تهمهم</span><h3>تعليمات شخصية</h3><p>دوّن إرشادات يحتاجها من تختارهم، دون تضمين كلمات مرور أو أسرار مالية.</p></article>
         </div>
+        <aside className="public-note"><strong>قبل أن تبدأ</strong><p>مفتاح الغياب يعتمد على حضورك ولا يثبت الوفاة. الإرسال مرتبط بالخدمات والمعالجة المجدولة، ولا يُضمن وصوله في لحظة محددة. وصيتي ليس بديلاً عن توثيق الوصايا القانونية.</p><Link href="/security">اقرأ حدود الخدمة ومعلومات الأمان</Link></aside>
       </section>
-
-      {/* Use Cases */}
-      <section className="bg-white py-20 border-t border-b border-amber-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center text-amber-900 mb-16">حالات الاستخدام</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 border border-amber-200 rounded-lg hover:shadow-lg transition">
-              <Heart className="w-8 h-8 text-red-600 mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-amber-900 mb-2">الرسائل الشخصية</h3>
-              <p className="text-amber-700">
-                اترك رسائل حب وتقدير وشكر لأحبائك. قد تصل بعد سنوات من كتابتك لها.
-              </p>
-            </div>
-            <div className="p-6 border border-amber-200 rounded-lg hover:shadow-lg transition">
-              <Lock className="w-8 h-8 text-red-600 mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-amber-900 mb-2">الوصايا والتعليمات</h3>
-              <p className="text-amber-700">
-                وثّق وصاياك، تعليمات الحسابات، كلمات المرور (بشكل آمن)، والمعلومات المهمة.
-              </p>
-            </div>
-            <div className="p-6 border border-amber-200 rounded-lg hover:shadow-lg transition">
-              <Users className="w-8 h-8 text-red-600 mb-4" aria-hidden="true" />
-              <h3 className="text-xl font-bold text-amber-900 mb-2">الحفاظ على الإرث</h3>
-              <p className="text-amber-700">
-                احفظ حكاياتك وتجاربك وحكمتك للأجيال القادمة.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center text-amber-900 mb-16">الأسئلة الشائعة</h2>
-          <div className="space-y-6">
-            {[
-              {
-                q: 'هل رسائلي آمنة حقاً؟',
-                a: 'نعم تماماً. استخدمنا أعلى معايير التشفير (AES-256). رسائلك مشفرة طرفياً، لا أحد يستطيع قراءتها إلا المستقبل.',
-              },
-              {
-                q: 'ماذا يحدث إذا توقفت عن استخدام الخدمة؟',
-                a: 'إذا توقفتَ عن تسجيل الدخول للفترة المحددة (30 يوم مثلاً)، ستُرسَل رسائلك تلقائياً.',
-              },
-              {
-                q: 'هل يمكنني تعديل الرسائل بعد إنشاؤها؟',
-                a: 'نعم، يمكنك تعديل أو حذف رسالة ما لم تُرسَل. بعد الإرسال، لا يمكن تعديلها.',
-              },
-              {
-                q: 'هل تحتاج معلومات خاصة عني؟',
-                a: 'لا. نستخدم فقط بريدك الإلكتروني. لا نجمع معلومات شخصية إضافية.',
-              },
-              {
-                q: 'هل الخدمة مجانية؟',
-                a: 'نعم، النسخة الأساسية مجانية تماماً. قد نوفر نسخة مدفوعة في المستقبل بمميزات إضافية.',
-              },
-              {
-                q: 'كم عدد الرسائل التي يمكنني كتابتها؟',
-                a: 'بلا حد. اكتب أي عدد من الرسائل التي تريدها.',
-              },
-            ].map((item, i) => (
-              <details
-                key={i}
-                className="group border border-amber-200 rounded-lg p-4 hover:bg-amber-50 transition cursor-pointer"
-              >
-                <summary className="flex justify-between items-center font-bold text-amber-900 select-none">
-                  {item.q}
-                  <CheckCircle className="w-5 h-5 text-red-600 group-open:hidden" aria-hidden="true" />
-                  <span className="group-open:inline hidden" aria-hidden="true">✓</span>
-                </summary>
-                <p className="text-amber-700 mt-4">{item.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Security Section */}
-      <section id="security" className="bg-white py-20 border-t border-b border-amber-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-center text-amber-900 mb-12">الأمان والخصوصية</h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-amber-900 flex items-center gap-2">
-                <Shield className="w-6 h-6 text-red-600" aria-hidden="true" />
-                التشفير
-              </h3>
-              <ul className="space-y-2 text-amber-700">
-                <li>✓ تشفير AES-256 للرسائل</li>
-                <li>✓ تشفير HTTPS لجميع الاتصالات</li>
-                <li>✓ عدم تخزين كلمات المرور (Google OAuth)</li>
-                <li>✓ لا توجد نسخ احتياطية غير محمية</li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-amber-900 flex items-center gap-2">
-                <Lock className="w-6 h-6 text-red-600" aria-hidden="true" />
-                الخصوصية
-              </h3>
-              <ul className="space-y-2 text-amber-700">
-                <li>✓ لا نشارك بيانات مع أطراف ثالثة</li>
-                <li>✓ لا نستخدم تتبع أو إعلانات</li>
-                <li>✓ معايير GDPR و privacy by design</li>
-                <li>✓ يمكنك طلب حذف جميع بيانات حسابك</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 text-center bg-gradient-to-b from-[#FDF8F0] to-[#FAF5ED]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-amber-900 mb-6">ابدأ اليوم</h2>
-          <p className="text-xl text-amber-700 mb-8">
-            انضم إلى الآلاف الذين سجلوا إرثهم الرقمي.
-          </p>
-          <Link
-            href="/login?signup=true"
-            className="px-8 py-4 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition text-lg inline-block"
-          >
-            إنشاء حساب مجاني الآن
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-amber-900 text-amber-50 py-12 border-t border-amber-800">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h4 className="font-bold mb-4 flex items-center gap-2">
-                <Heart className="w-5 h-5 fill-red-500 text-red-500" aria-hidden="true" />
-                Wasiyati
-              </h4>
-              <p className="text-sm text-amber-100">
-                منصة آمنة لحفظ إرثك الرقمي وإرسال رسائلك إلى الأحبّاء.
-              </p>
-            </div>
-            <nav aria-label="Footer Links">
-              <h4 className="font-bold mb-4">الروابط</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="#features" className="hover:text-white transition">
-                    المميزات
-                  </a>
-                </li>
-                <li>
-                  <a href="#how-it-works" className="hover:text-white transition">
-                    كيف يعمل
-                  </a>
-                </li>
-                <li>
-                  <a href="/faq" className="hover:text-white transition">
-                    الأسئلة الشائعة
-                  </a>
-                </li>
-              </ul>
-            </nav>
-            <nav aria-label="Legal">
-              <h4 className="font-bold mb-4">القانونية</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link href="/privacy" className="hover:text-white transition">
-                    سياسة الخصوصية
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/terms" className="hover:text-white transition">
-                    شروط الاستخدام
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about" className="hover:text-white transition">
-                    من نحن
-                  </Link>
-                </li>
-              </ul>
-            </nav>
-            <nav aria-label="Contact">
-              <h4 className="font-bold mb-4">التواصل</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="/contact" className="hover:text-white transition">
-                    اتصل بنا
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="mailto:support@wasiyati.app"
-                    className="hover:text-white transition"
-                  >
-                    support@wasiyati.app
-                  </a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div className="border-t border-amber-800 pt-8 text-center text-sm">
-            <p className="text-amber-100">
-              © 2026 Wasiyati. جميع الحقوق محفوظة.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  )
+      <section className="public-container public-section public-faq-section" id="faq" aria-labelledby="faq-title"><div><p className="public-eyebrow">إجابات قبل أول رسالة</p><h2 id="faq-title">أسئلة تستحق الوضوح</h2><p className="public-muted">عن الحساب والبيانات والإرسال،<br />وما هو متاح حالياً.</p><Link className="public-text-link" href="/privacy">كيف تُستخدم بياناتك؟ <ArrowUpLeft size={18} aria-hidden="true" /></Link></div><FaqList /></section>
+      <section className="public-container public-final-cta"><p className="public-eyebrow">ابدأ بما تريد قوله</p><h2>بعض الكلمات تستحق أن تُكتب.</h2><p>ادخل بحساب Google، واكتب رسالتك الأولى.</p><Link href="/login" className="public-button">ابدأ رسالتك <ArrowUpLeft size={20} aria-hidden="true" /></Link></section>
+    </main>
+  </PublicShell>
 }

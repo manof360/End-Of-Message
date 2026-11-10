@@ -1,0 +1,80 @@
+
+> wasiyati@1.1.0 build
+> next build
+
+  ▲ Next.js 14.2.5
+
+   Creating an optimized production build ...
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+ ⚠ Using edge runtime on a page currently disables static generation for that page
+   Generating static pages (0/42) ...
+   Generating static pages (10/42)
+   Generating static pages (20/42)
+   Generating static pages (31/42)
+ ✓ Generating static pages (42/42)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    2.78 kB        96.7 kB
+├ ○ /_not-found                          141 B          87.3 kB
+├ ○ /about                               2.78 kB        96.7 kB
+├ ƒ /admin                               5.73 kB         109 kB
+├ ƒ /api/admin/debug                     0 B                0 B
+├ ƒ /api/admin/debug/auth-accounts       0 B                0 B
+├ ƒ /api/admin/debug/drive               0 B                0 B
+├ ƒ /api/admin/debug/google-api          0 B                0 B
+├ ƒ /api/admin/stats                     0 B                0 B
+├ ƒ /api/admin/test-email                0 B                0 B
+├ ƒ /api/admin/test/send-message         0 B                0 B
+├ ƒ /api/admin/users                     0 B                0 B
+├ ƒ /api/auth/[...nextauth]              0 B                0 B
+├ ƒ /api/auth/google-drive-connect       0 B                0 B
+├ ƒ /api/auth/revoke-drive               0 B                0 B
+├ ƒ /api/cron/process-switches           0 B                0 B
+├ ƒ /api/drive                           0 B                0 B
+├ ƒ /api/keyholder/confirm               0 B                0 B
+├ ƒ /api/keyholders                      0 B                0 B
+├ ƒ /api/keyholders/[id]                 0 B                0 B
+├ ƒ /api/messages                        0 B                0 B
+├ ƒ /api/messages/[id]                   0 B                0 B
+├ ƒ /api/switch                          0 B                0 B
+├ ○ /contact                             2.78 kB        96.7 kB
+├ ƒ /dashboard                           175 B          94.1 kB
+├ ƒ /dashboard/drive                     3.03 kB        95.9 kB
+├ ƒ /dashboard/keyholders                3.23 kB         101 kB
+├ ƒ /dashboard/messages                  175 B          94.1 kB
+├ ƒ /dashboard/messages/[id]             1.58 kB         101 kB
+├ ƒ /dashboard/messages/[id]/edit        4.17 kB         103 kB
+├ ƒ /dashboard/messages/new              4.17 kB         103 kB
+├ ƒ /dashboard/settings                  293 B          92.5 kB
+├ ƒ /dashboard/switch                    3.86 kB          96 kB
+├ ƒ /dashboard/test                      2.52 kB        94.7 kB
+├ ○ /error                               2.78 kB        96.7 kB
+├ ○ /faq                                 2.78 kB        96.7 kB
+├ ○ /features                            2.78 kB        96.7 kB
+├ ○ /keyholder/already-confirmed         2.78 kB        96.7 kB
+├ ○ /keyholder/confirmed                 2.78 kB        96.7 kB
+├ ○ /login                               2.23 kB         106 kB
+├ ƒ /opengraph-image                     0 B                0 B
+├ ○ /privacy                             2.78 kB        96.7 kB
+├ ○ /robots.txt                          0 B                0 B
+├ ○ /security                            2.78 kB        96.7 kB
+├ ○ /sitemap.xml                         0 B                0 B
+└ ○ /terms                               2.78 kB        96.7 kB
++ First Load JS shared by all            87.1 kB
+  ├ chunks/23-809d097dd52a6e95.js        31.5 kB
+  ├ chunks/fd9d1056-190f5d66414aab5f.js  53.6 kB
+  └ other shared chunks (total)          1.95 kB
+
+
+ƒ Middleware                             27.7 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
